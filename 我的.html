@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>我的个人中心</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: #e8eaf0;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+        }
+
+        /* 手机容器 */
+        .phone-container {
+            position: relative;
+            width: 375px;
+            height: 812px;
+            background: #000;
+            border-radius: 50px;
+            padding: 12px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+        }
+
+        .phone-frame {
+            width: 100%;
+            height: 100%;
+            background: #fff;
+            border-radius: 40px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* 刘海 */
+        .notch {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 180px;
+            height: 30px;
+            background: #000;
+            border-radius: 0 0 20px 20px;
+            z-index: 10;
+        }
+
+        /* 状态栏 */
+        .status-bar {
+            height: 44px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            padding: 0 24px 8px;
+            font-size: 14px;
+            font-weight: 600;
+            z-index: 99;
+        }
+
+        /* 内容区 */
+        .screen-content {
+            height: calc(100% - 44px - 84px);
+            overflow-y: auto;
+            background-color: #F4F7FA;
+        }
+
+        .screen-content::-webkit-scrollbar { display: none; }
+
+        /* 底部指示条 */
+        .home-indicator {
+            position: absolute;
+            bottom: 8px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 134px;
+            height: 5px;
+            background: #000;
+            border-radius: 3px;
+            opacity: 0.3;
+        }
+
+        /* 顶部深蓝渐变区域 */
+        .user-header {
+            background: linear-gradient(180deg, #1e3c72 0%, #2a5298 70%, #F4F7FA 100%);
+            padding: 20px 20px 30px;
+            color: white;
+            position: relative;
+        }
+
+        /* 个人信息布局 */
+        .user-profile {
+            display: flex;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .avatar-wrapper {
+            position: relative;
+            margin-right: 15px;
+        }
+
+        .avatar-wrapper img {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            background: #fff;
+        }
+
+        .level-badge {
+            position: absolute;
+            bottom: -5px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #FFD700;
+            color: #1e3c72;
+            font-size: 11px;
+            font-weight: bold;
+            padding: 2px 10px;
+            border-radius: 12px;
+            white-space: nowrap;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+        }
+
+        .user-text h2 {
+            font-size: 22px;
+            margin-bottom: 4px;
+        }
+
+        .user-text p {
+            font-size: 12px;
+            opacity: 0.8;
+            letter-spacing: 0.5px;
+        }
+
+        /* 核心成绩看板 */
+        .score-board {
+            background: white;
+            border-radius: 20px;
+            display: flex;
+            padding: 20px 0;
+            box-shadow: 0 10px 25px rgba(30, 60, 114, 0.1);
+            margin-top: 10px;
+        }
+
+        .score-item {
+            flex: 1;
+            text-align: center;
+            border-right: 1px solid #F0F0F0;
+        }
+
+        .score-item:last-child {
+            border-right: none;
+        }
+
+        .score-num {
+            display: block;
+            font-size: 20px;
+            font-weight: 800;
+            color: #1e3c72;
+            margin-bottom: 4px;
+        }
+
+        .score-label {
+            font-size: 11px;
+            color: #999;
+        }
+
+        /* 模块容器 */
+        .section-container {
+            padding: 0 15px 30px;
+            margin-top: -10px;
+        }
+
+        /* 考核进度卡片 */
+        .status-card {
+            background: white;
+            border-radius: 16px;
+            padding: 18px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            border-left: 6px solid #FFD700;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+        }
+
+        .status-info strong {
+            display: block;
+            font-size: 15px;
+            color: #333;
+            margin-bottom: 4px;
+        }
+
+        .status-info span {
+            font-size: 12px;
+            color: #FF8C00;
+            font-weight: 500;
+        }
+
+        .action-btn {
+            background: #1e3c72;
+            color: white;
+            border: none;
+            padding: 8px 18px;
+            border-radius: 50px;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        /* 列表菜单 */
+        .menu-group {
+            background: white;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+        }
+
+        .menu-item {
+            padding: 18px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #F9F9F9;
+            transition: background 0.2s;
+        }
+
+        .menu-item:active {
+            background: #F0F4FA;
+        }
+
+        .menu-item:last-child {
+            border-bottom: none;
+        }
+
+        .menu-title {
+            font-size: 15px;
+            color: #444;
+            display: flex;
+            align-items: center;
+        }
+
+        /* 模拟图标 */
+        .menu-icon {
+            width: 24px;
+            height: 24px;
+            margin-right: 12px;
+            background: #E8EEF7;
+            border-radius: 6px;
+            display: inline-block;
+        }
+
+        .menu-extra {
+            font-size: 13px;
+            color: #B0B0B0;
+        }
+
+        .badge-count {
+            background: #FF4D4F;
+            color: white;
+            padding: 1px 7px;
+            border-radius: 10px;
+            font-size: 11px;
+            margin-left: 5px;
+        }
+
+        /* 底部导航 */
+        .tab-bar {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            height: 84px;
+            background: white;
+            display: flex;
+            justify-content: space-around;
+            padding-top: 10px;
+            border-top: 1px solid #eee;
+        }
+        .tab-item { display: flex; flex-direction: column; align-items: center; gap: 4px; color: #999; }
+        .tab-item.active { color: #1e3c72; }
+        .tab-item svg { width: 22px; height: 22px; }
+        .tab-item span { font-size: 10px; font-weight: 500; }
+        
+        .center-btn {
+            position: relative;
+            top: -25px;
+        }
+        .center-inner {
+            width: 54px;
+            height: 54px;
+            background: #1e3c72;
+            border-radius: 18px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            box-shadow: 0 8px 20px rgba(30,60,114,0.3);
+            transform: rotate(45deg);
+        }
+        .center-inner svg { transform: rotate(-45deg); }
+    </style>
+</head>
+<body>
+
+<div class="phone-container">
+    <div class="phone-frame">
+        <!-- 刘海 -->
+        <div class="notch"></div>
+        
+        <!-- 状态栏 -->
+        <div class="status-bar">
+            <span id="time">09:41</span>
+            <div style="display: flex; gap: 5px; align-items: center;">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12.01 21.49L23.64 7c-.45-.34-4.93-4-11.64-4C5.28 3 .81 6.66.36 7l11.63 14.49.01.01.01-.01z" fill-opacity=".3"/></svg>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M15.67 4H14V2h-4v2H8.33C7.6 4 7 4.6 7 5.33v15.33C7 21.4 7.6 22 8.33 22h7.33c.74 0 1.34-.6 1.34-1.33V5.33C17 4.6 16.4 4 15.67 4z"/></svg>
+            </div>
+        </div>
+
+        <div class="screen-content">
+
+    <div class="user-header">
+        <div class="user-profile">
+            <div class="avatar-wrapper">
+                <img src="https://api.dicebear.com/7.x/notionists/svg?seed=Felix" alt="User Avatar">
+                <div class="level-badge">金牌月嫂</div>
+            </div>
+            <div class="user-text">
+                <h2>张美玲 <small style="font-size: 14px; opacity: 0.7; font-weight: normal;">✎ 修改</small></h2>
+                <p>工号: A10293 | 离下一等级还需 200 经验</p>
+            </div>
+        </div>
+
+        <div class="score-board">
+            <div class="score-item">
+                <span class="score-num">96</span>
+                <span class="score-label">最近得分</span>
+            </div>
+            <div class="score-item">
+                <span class="score-num">158</span>
+                <span class="score-label">累计答题</span>
+            </div>
+            <div class="score-item">
+                <span class="score-num">8</span>
+                <span class="score-label">获得荣誉</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="section-container">
+        
+        <div class="status-card">
+            <div class="status-info">
+                <strong>《新生儿护理专项考核》</strong>
+                <span>未开始 · 20道选择题</span>
+            </div>
+            <button class="action-btn">去挑战</button>
+        </div>
+
+        <div class="menu-group">
+            <div class="menu-item">
+                <div class="menu-title">
+                    <span class="menu-icon" style="background:#FFF1F0;"></span>
+                    我的错题本
+                    <span class="badge-count">12</span>
+                </div>
+                <div class="menu-extra">查看全部 ></div>
+            </div>
+            <div class="menu-item">
+                <div class="menu-title">
+                    <span class="menu-icon" style="background:#F6FFED;"></span>
+                    荣誉证书
+                </div>
+                <div class="menu-extra">已获3张 ></div>
+            </div>
+            <div class="menu-item">
+                <div class="menu-title">
+                    <span class="menu-icon" style="background:#E6F7FF;"></span>
+                    考核记录
+                </div>
+                <div class="menu-extra">最近一次 03-12 ></div>
+            </div>
+            <div class="menu-item">
+                <div class="menu-title">
+                    <span class="menu-icon" style="background:#F9F0FF;"></span>
+                    我的奖励
+                </div>
+                <div class="menu-extra">积分 1200 ></div>
+            </div>
+            <div class="menu-item">
+                <div class="menu-title">
+                    <span class="menu-icon" style="background:#FFFBE6;"></span>
+                    帮助与反馈
+                </div>
+                <div class="menu-extra">></div>
+            </div>
+        </div>
+        </div>
+    </div>
+
+        <div class="tab-bar">
+            <div class="tab-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+                <span>首页</span>
+            </div>
+            <div class="tab-item center-btn">
+                <div class="center-inner">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                </div>
+            </div>
+            <div class="tab-item active">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                <span>我的</span>
+            </div>
+        </div>
+
+        <!-- 底部Home指示条 -->
+        <div class="home-indicator"></div>
+    </div>
+</div>
+
+<script>
+    function updateTime() {
+        const now = new Date();
+        const h = String(now.getHours()).padStart(2, '0');
+        const m = String(now.getMinutes()).padStart(2, '0');
+        document.getElementById('time').textContent = h + ':' + m;
+    }
+    setInterval(updateTime, 1000);
+    updateTime();
+</script>
+
+</body>
+</html>

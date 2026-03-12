@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>蓝企鹅精英阿姨荣誉榜</title>
+    <style>
+        /* 全局基调：延续蓝企鹅专业深蓝与高质感 */
+        * {
+            margin: 0; padding: 0; box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        }
+
+        body {
+            background: #e8eaf0;
+            display: flex; justify-content: center; align-items: center;
+            min-height: 100vh; margin: 0;
+        }
+
+        /* 手机容器 */
+        .phone-container {
+            position: relative;
+            width: 375px;
+            height: 812px;
+            background: #000;
+            border-radius: 50px;
+            padding: 12px;
+            box-shadow: 0 40px 100px rgba(0, 0, 0, 0.8);
+        }
+
+        .phone-frame {
+            width: 100%;
+            height: 100%;
+            background: #F4F7FA;
+            border-radius: 40px;
+            overflow: hidden;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .notch {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 160px;
+            height: 30px;
+            background: #000;
+            border-radius: 0 0 18px 18px;
+            z-index: 100;
+        }
+
+        /* 状态栏 */
+        .status-bar {
+            height: 44px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            padding: 0 24px 8px;
+            font-size: 14px;
+            font-weight: 600;
+            z-index: 99;
+        }
+
+        /* 顶部导航与前三名领奖台 (同步首页UI风格) */
+        .rank-header {
+            background: linear-gradient(180deg, #1e3c72 0%, #2a5298 100%);
+            padding: 45px 20px 20px;
+            color: white; text-align: center;
+            border-bottom: 2px solid #FFD700; /* 金色分割线增强荣誉感 */
+        }
+
+        .rank-header h1 { font-size: 22px; font-weight: 800; margin-bottom: 25px; letter-spacing: 1px;}
+
+        /* 前三名大卡片 (与首页一致) */
+        .top-podium {
+            display: flex; justify-content: space-around; align-items: flex-end;
+            padding: 0 10px; margin-bottom: 5px;
+        }
+
+        .podium-item {
+            display: flex; flex-direction: column; align-items: center;
+            text-align: center; position: relative;
+        }
+
+        /* 头像处理：采用成熟阿姨真实形象，增加3D边框 */
+        .avatar-wrap { position: relative; margin-bottom: 12px; }
+        .avatar-main {
+            width: 60px; height: 60px;
+            border-radius: 50%;
+            object-fit: cover; /* 确保阿姨头像不变形 */
+            border: 3px solid white;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            background: #eee;
+        }
+
+        /* 冠亚季军差异化 (同步首页) */
+        .rank-1 .avatar-main { width: 85px; height: 85px; border-color: #FFD700; box-shadow: 0 0 20px rgba(255,215,0,0.6); }
+        .rank-2 .avatar-main { border-color: #C0C0C0; }
+        .rank-3 .avatar-main { border-color: #CD7F32; }
+
+        .crown { position: absolute; top: -18px; left: 50%; transform: translateX(-50%); font-size: 24px; }
+        .rank-tag {
+            position: absolute; bottom: 0; left: 50%; transform: translateX(-50%) translateY(50%);
+            background: #1e3c72; color: white; font-size: 11px; font-weight: bold;
+            padding: 3px 10px; border-radius: 12px; white-space: nowrap;
+        }
+        .rank-1 .rank-tag { background: #FFD700; color: #856404; }
+
+        .name { font-size: 14px; font-weight: 700; color: #fff; margin-top: 15px; }
+        .score { font-size: 11px; color: #fff; opacity: 0.9; margin-top: 4px; font-weight: 500; }
+
+        /* 排行榜列表区 (与首页列表风格统一) */
+        .rank-list {
+            flex: 1; background: white;
+            border-radius: 30px 30px 0 0;
+            padding: 20px;
+            overflow-y: auto;
+            box-shadow: 0 -10px 30px rgba(0,0,0,0.05);
+            margin-top: -15px; /* 向上覆盖 Banner 边缘 */
+        }
+
+        .rank-list::-webkit-scrollbar { display: none; }
+
+        .rank-item {
+            display: flex; align-items: center;
+            padding: 18px 0;
+            border-bottom: 1px solid #F0F4FA;
+            transition: background 0.2s;
+        }
+        .rank-item:active { background: #F0F4FA; }
+        .rank-item:last-child { border-bottom: none; }
+
+        .rank-num { width: 35px; font-size: 17px; font-weight: 900; color: #999; text-align: center; color: #cbd5e1; }
+
+        .item-avatar {
+            width: 48px; height: 48px;
+            border-radius: 50%; object-fit: cover;
+            margin: 0 15px;
+            border: 2px solid #E8EDF2;
+        }
+
+        .item-info { flex: 1; }
+        .item-info .name-row { font-size: 16px; font-weight: 600; color: #1a1a1a; display: flex; align-items: center; }
+        .item-info .tag {
+            font-size: 11px; color: #1e3c72; background: rgba(30, 60, 114, 0.1);
+            padding: 2px 7px; border-radius: 4px; margin-left: 8px; font-weight: 500;
+        }
+        .item-info .desc { font-size: 12px; color: #8E8E93; margin-top: 5px; }
+
+        .item-score { text-align: right; }
+        .score-val { color: #1e3c72; font-weight: 800; font-size: 19px; }
+        .score-unit { font-size: 10px; color: #999; }
+
+        /* 底部固定：我的排名卡片 (磨砂玻璃专业感) */
+        .my-rank-fixed {
+            background: #1e3c72; /* 深蓝基调 */
+            padding: 15px 25px;
+            display: flex; align-items: center;
+            color: white;
+            border-radius: 20px 20px 0 0;
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .home-indicator {
+            position: absolute;
+            bottom: 8px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 120px;
+            height: 5px;
+            background: #000;
+            border-radius: 10px;
+            opacity: 0.1;
+        }
+    </style>
+</head>
+<body>
+
+<div class="phone-container">
+    <div class="phone-frame">
+        <div class="notch"></div>
+        
+        <div class="status-bar">
+            <span id="time">09:41</span>
+            <div style="display: flex; gap: 5px; align-items: center;">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12.01 21.49L23.64 7c-.45-.34-4.93-4-11.64-4C5.28 3 .81 6.66.36 7l11.63 14.49.01.01.01-.01z" fill-opacity=".3"/></svg>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M15.67 4H14V2h-4v2H8.33C7.6 4 7 4.6 7 5.33v15.33C7 21.4 7.6 22 8.33 22h7.33c.74 0 1.34-.6 1.34-1.33V5.33C17 4.6 16.4 4 15.67 4z"/></svg>
+            </div>
+        </div>
+
+        <div class="rank-header">
+            <h1>蓝企鹅年度技能荣誉榜</h1>
+            
+            <div class="top-podium">
+                <div class="podium-item rank-2">
+                    <div class="avatar-wrap">
+                        <img src="https://i.pravatar.cc/100?u=1" class="avatar-main" alt="李秀芳">
+                        <div class="rank-tag">NO.2</div>
+                    </div>
+                    <span class="name">李秀芳</span>
+                    <span class="score">98.5分 | 击败99%</span>
+                </div>
+
+                <div class="podium-item rank-1">
+                    <div class="crown">👑</div>
+                    <div class="avatar-wrap">
+                        <img src="https://i.pravatar.cc/100?u=2" class="avatar-main" alt="王美琴">
+                        <div class="rank-tag">年度标兵</div>
+                    </div>
+                    <span class="name">王美琴</span>
+                    <span class="score">99.8分 | 荣誉满载</span>
+                </div>
+
+                <div class="podium-item rank-3">
+                    <div class="avatar-wrap">
+                        <img src="https://i.pravatar.cc/100?u=3" class="avatar-main" alt="赵红梅">
+                        <div class="rank-tag">NO.3</div>
+                    </div>
+                    <span class="name">赵红梅</span>
+                    <span class="score">97.2分 | 稳步提升</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="rank-list">
+            <div class="rank-item">
+                <div class="rank-num">4</div>
+                <img class="item-avatar" src="https://i.pravatar.cc/100?u=a042581f4e29026704d" alt="阿姨">
+                <div class="item-info">
+                    <div class="name-row">孙丽丽<span class="tag">高级月嫂</span></div>
+                    <div class="desc">累计练习 1,450 题 | 击败98%</div>
+                </div>
+                <div class="item-score">
+                    <div class="score-val">96.5</div>
+                    <div class="score-unit">平均分</div>
+                </div>
+            </div>
+
+            <div class="rank-item">
+                <div class="rank-num">5</div>
+                <img class="item-avatar" src="https://i.pravatar.cc/100?u=a042581f4e29026703d" alt="阿姨">
+                <div class="item-info">
+                    <div class="name-row">郭春燕<span class="tag">育儿嫂</span></div>
+                    <div class="desc">累计练习 1,280 题 | 技能扎实</div>
+                </div>
+                <div class="item-score">
+                    <div class="score-val">95.0</div>
+                    <div class="score-unit">平均分</div>
+                </div>
+            </div>
+
+            <div class="rank-item">
+                <div class="rank-num">6</div>
+                <img class="item-avatar" src="https://i.pravatar.cc/100?u=a042581f4e29026701d" alt="阿姨">
+                <div class="item-info">
+                    <div class="name-row">陈大姐<span class="tag">保洁主管</span></div>
+                    <div class="desc">累计练习 1,100 题 | 经验丰富</div>
+                </div>
+                <div class="item-score">
+                    <div class="score-val">94.8</div>
+                    <div class="score-unit">平均分</div>
+                </div>
+            </div>
+
+            <div class="rank-item" style="opacity: 0.6;">
+                <div class="rank-num">7</div>
+                <img class="item-avatar" src="https://i.pravatar.cc/100?u=a042581f4e29026702d" alt="阿姨">
+                <div class="item-info">
+                    <div class="name-row">周美华</div>
+                    <div class="desc">累计练习 950 题</div>
+                </div>
+                <div class="item-score">
+                    <div class="score-val">93.2</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="my-rank-fixed">
+            <div style="font-size: 18px; font-weight: 900; color: #FFD700; margin-right: 18px;">15</div>
+            <img class="item-avatar" src="https://i.pravatar.cc/100?u=a042581f4e29026705d" style="width: 42px; height: 42px; border: 2px solid #FFD700;">
+            <div class="item-info">
+                <div class="name-row" style="color: white; font-size: 15px;">我 (张美玲)</div>
+                <div class="desc" style="color: rgba(255,255,255,0.7);">本周已提升了 3 个名次</div>
+            </div>
+            <div class="item-score">
+                <div class="score-val" style="color: #FFD700; font-size: 18px;">90.5</div>
+                <div class="score-unit" style="color:rgba(255,255,255,0.6)">当前得分</div>
+            </div>
+        </div>
+
+        <div class="home-indicator"></div>
+    </div>
+</div>
+
+<script>
+    function updateTime() {
+        const now = new Date();
+        const h = String(now.getHours()).padStart(2, '0');
+        const m = String(now.getMinutes()).padStart(2, '0');
+        document.getElementById('time').textContent = h + ':' + m;
+    }
+    setInterval(updateTime, 1000);
+    updateTime();
+</script>
+
+</body>
+</html>
