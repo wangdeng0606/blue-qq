@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>蓝企鹅 AI 智能录制</title>
+    <style>
+        :root {
+            --primary-accent: #2D5AFE;
+            --ai-glow: #00FFB2;
+            --white: #FFFFFF;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background: #E0E3E8;
+            display: flex; justify-content: center; align-items: center;
+            height: 100vh; font-family: "PingFang SC", sans-serif;
+        }
+
+        /* 手机壳 */
+        .phone-case {
+            width: 375px; height: 780px;
+            background: #111; border-radius: 54px;
+            padding: 10px; border: 4px solid #D1D5DB;
+            box-shadow: 0 40px 100px rgba(0,0,0,0.2);
+            position: relative;
+        }
+
+        .phone-screen {
+            width: 100%; height: 100%;
+            background: #000; border-radius: 44px;
+            overflow: hidden; display: flex; flex-direction: column;
+            position: relative;
+        }
+
+        /* 视频背景：模拟环境暗部与AI补光区 */
+        .camera-view {
+            position: absolute; width: 100%; height: 100%;
+            background: url('https://images.unsplash.com/photo-1584622650111-993a426fbf0a?auto=format&fit=crop&w=600&q=80');
+            background-size: cover; background-position: center;
+            filter: brightness(0.4); /* 初始极暗 */
+            transition: filter 2s ease-in-out;
+        }
+
+        /* AI 补光激活后的状态 */
+        .camera-view.ai-active {
+            filter: brightness(1.1) contrast(1.1);
+        }
+
+        /* 扫描线条动画 */
+        .ai-scanner {
+            position: absolute; top: 0; left: 0; width: 100%; height: 2px;
+            background: linear-gradient(90deg, transparent, var(--ai-glow), transparent);
+            box-shadow: 0 0 15px var(--ai-glow);
+            animation: scan 3s infinite linear;
+            z-index: 5; opacity: 0.6;
+        }
+
+        @keyframes scan {
+            0% { top: 10%; }
+            100% { top: 90%; }
+        }
+
+        /* 顶部状态栏 */
+        .camera-header {
+            position: relative; z-index: 10;
+            padding: 50px 20px 0;
+            display: flex; justify-content: space-between; align-items: flex-start;
+        }
+
+        .ai-status-pill {
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(10px);
+            padding: 6px 12px; border-radius: 20px;
+            display: flex; align-items: center; gap: 8px;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .status-dot {
+            width: 8px; height: 8px; background: var(--ai-glow);
+            border-radius: 50%; box-shadow: 0 0 10px var(--ai-glow);
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 0.4; }
+            50% { opacity: 1; }
+            100% { opacity: 0.4; }
+        }
+
+        .ai-status-pill span { color: #FFF; font-size: 11px; font-weight: 600; }
+
+        /* 中间辅助线 */
+        .guides {
+            position: absolute; inset: 0;
+            display: flex; justify-content: center; align-items: center;
+            pointer-events: none; z-index: 2;
+        }
+        .level-line {
+            width: 180px; height: 1px; background: rgba(255,255,255,0.3);
+        }
+
+        /* 底部操作区 */
+        .camera-footer {
+            position: absolute; bottom: 0; width: 100%;
+            padding: 40px 20px 60px;
+            background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
+            z-index: 10; text-align: center;
+        }
+
+        .controls-row {
+            display: flex; align-items: center; justify-content: center;
+            gap: 40px; margin-bottom: 20px;
+        }
+
+        .album-btn {
+            width: 52px; height: 52px;
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 14px;
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+        }
+        .album-btn svg {
+            width: 28px; height: 28px;
+        }
+        .album-btn:active {
+            background: rgba(255, 255, 255, 0.25);
+            transform: scale(0.95);
+        }
+
+        .record-btn-wrap {
+            display: inline-flex; align-items: center; justify-content: center;
+            width: 72px; height: 72px; border: 4px solid #fff;
+            border-radius: 50%; cursor: pointer;
+        }
+        .record-btn-inner {
+            width: 54px; height: 54px; background: #FF3B30;
+            border-radius: 50%; transition: all 0.3s;
+        }
+
+
+
+        /* 补光提示弹窗 */
+        .ai-toast {
+            position: absolute; top: 45%; left: 50%; transform: translate(-50%, -50%);
+            background: rgba(255, 255, 255, 0.95);
+            padding: 20px 30px; border-radius: 16px;
+            display: flex; align-items: center; gap: 16px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            z-index: 20; animation: fadeIn 0.5s;
+            min-width: 280px;
+        }
+        .ai-toast .icon-wrapper {
+            width: 48px; height: 48px;
+            background: linear-gradient(135deg, #FFD700, #FFA500);
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 28px;
+            box-shadow: 0 4px 12px rgba(255, 215, 0, 0.4);
+        }
+        .ai-toast b { font-size: 16px; color: var(--primary-accent); }
+        .ai-toast p { margin-top: 4px; }
+    </style>
+</head>
+<body>
+
+<div class="phone-case">
+    <div class="phone-screen">
+        <div class="ai-scanner"></div>
+
+        <div class="camera-view" id="v"></div>
+
+        <div class="camera-header">
+            <div style="color: white; font-size: 24px;">✕</div>
+            <div class="ai-status-pill">
+                <div class="status-dot"></div>
+                <span id="aiText">环境检测中...</span>
+            </div>
+            <div style="color: white; font-size: 24px; cursor: pointer;">⟲</div>
+        </div>
+
+        <div id="toast" class="ai-toast" style="display:none;">
+            <div class="icon-wrapper">✨</div>
+            <div>
+                <b>AI 自动补光已启动</b>
+                <p style="font-size:12px; color:#666;">检测到环境过暗，已优化场景</p>
+            </div>
+        </div>
+
+        <div class="guides">
+            <div class="level-line"></div>
+        </div>
+
+        <div class="camera-footer">
+            <div class="controls-row">
+                <div class="album-btn" onclick="openAlbum()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/>
+                    </svg>
+                </div>
+                <div class="record-btn-wrap">
+                    <div class="record-btn-inner"></div>
+                </div>
+                <div style="width: 52px;"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // 模拟 1.5 秒后检测到光线暗，启动补光
+    setTimeout(() => {
+        document.getElementById('toast').style.display = 'flex';
+        document.getElementById('v').classList.add('ai-active');
+        document.getElementById('aiText').innerText = 'AI 补光模式';
+        
+        // 3秒后隐藏提示，但保留补光效果
+        setTimeout(() => {
+            document.getElementById('toast').style.opacity = '0';
+            document.getElementById('toast').style.transition = '0.8s';
+        }, 3000);
+    }, 1500);
+
+    // 打开相册功能
+    function openAlbum() {
+        alert('打开相册选择');
+        // 实际项目中可以调用原生相册 API
+    }
+</script>
+
+</body>
+</html>
