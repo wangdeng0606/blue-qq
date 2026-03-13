@@ -93,8 +93,10 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
         }
+
+        .title-section h1 { font-size: 24px; }
 
         .score-badge {
             background: rgba(255,255,255,0.2);
@@ -102,9 +104,6 @@
             border-radius: 20px;
             font-size: 12px;
         }
-
-        .title-section h1 { font-size: 24px; margin-bottom: 5px; }
-        .title-section p { font-size: 13px; opacity: 0.8; }
 
         /* 搜索框 */
         .search-bar {
@@ -117,9 +116,7 @@
         }
 
         /* 题库列表 */
-        .content-area { padding: 20px; }
-        .section-h { font-size: 16px; font-weight: bold; margin-bottom: 15px; display: flex; justify-content: space-between; }
-        .section-h small { color: #1e3c72; font-size: 12px; }
+        .content-area { padding: 20px; padding-bottom: 40px; }
 
         .topic-card {
             background: white;
@@ -144,7 +141,7 @@
         }
 
         .topic-info { flex: 1; }
-        .topic-info h3 { font-size: 15px; margin-bottom: 4px; color: #333; }
+        .topic-info h3 { font-size: 15px; margin-bottom: 6px; color: #333; }
         .topic-info p { font-size: 12px; color: #999; }
 
         .progress-mini {
@@ -176,27 +173,21 @@
         <div class="screen-content">
             <div class="header">
                 <div class="user-stat">
+                    <div class="title-section">
+                        <h1>技能题库中心</h1>
+                        <p style="font-size: 12px; opacity: 0.85; margin-top: 5px;">精选题库助力技能提升</p>
+                    </div>
                     <span class="score-badge">我的积分: 1280</span>
-                    <span style="font-size: 18px;">🔔</span>
-                </div>
-                <div class="title-section">
-                    <h1>技能题库中心</h1>
-                    <p>今天已练 15 题，超过了全国 88% 的同行</p>
                 </div>
                 <div class="search-bar">🔍 搜索考核科目或关键词</div>
             </div>
 
             <div class="content-area">
-            <div class="section-h">
-                最近必考
-                <small>全部科目 ></small>
-            </div>
-
-            <div class="topic-card">
+            <div class="topic-card" onclick="location.href='考核.html'" style="cursor: pointer;">
                 <div class="topic-icon" style="background: #FFF4E5;">🍼</div>
                 <div class="topic-info">
                     <h3>新生儿护理专项</h3>
-                    <p>共 120 题 | 难度: 中等</p>
+                    <p>共 120 题</p>
                 </div>
                 <div class="progress-mini">
                     <span class="perc">80%</span>
@@ -208,7 +199,7 @@
                 <div class="topic-icon" style="background: #E5F7FF;">🥘</div>
                 <div class="topic-info">
                     <h3>营养膳食搭配</h3>
-                    <p>共 85 题 | 难度: 简单</p>
+                    <p>共 85 题</p>
                 </div>
                 <div class="progress-mini">
                     <span class="perc">35%</span>
@@ -216,15 +207,11 @@
                 </div>
             </div>
 
-            <div class="section-h" style="margin-top: 25px;">
-                专项练习
-            </div>
-
             <div class="topic-card">
                 <div class="topic-icon" style="background: #F0F0FF;">🧼</div>
                 <div class="topic-info">
                     <h3>保洁实操规范</h3>
-                    <p>已通过考核 | 100分</p>
+                    <p>已通过考核</p>
                 </div>
                 <div style="color: #4CAF50; font-size: 20px;">✓</div>
             </div>
@@ -233,12 +220,88 @@
                 <div class="topic-icon" style="background: #FFF0F0;">🚑</div>
                 <div class="topic-info">
                     <h3>应急急救常识</h3>
-                    <p>未开始练习 | 50 题</p>
+                    <p>共 50 题</p>
                 </div>
                 <div class="progress-mini">
                     <span class="perc" style="color:#ccc">0%</span>
                     <div class="p-bar-bg"><div class="p-bar-fill" style="width: 0%"></div></div>
                 </div>
+            </div>
+
+            <div class="topic-card">
+                <div class="topic-icon" style="background: #E8F5E9;">🧹</div>
+                <div class="topic-info">
+                    <h3>厨房卫生清洁</h3>
+                    <p>共 95 题</p>
+                </div>
+                <div class="progress-mini">
+                    <span class="perc">60%</span>
+                    <div class="p-bar-bg"><div class="p-bar-fill" style="width: 60%"></div></div>
+                </div>
+            </div>
+
+            <div class="topic-card">
+                <div class="topic-icon" style="background: #FFF3E0;">👶</div>
+                <div class="topic-info">
+                    <h3>婴幼儿照护技能</h3>
+                    <p>共 110 题</p>
+                </div>
+                <div class="progress-mini">
+                    <span class="perc">45%</span>
+                    <div class="p-bar-bg"><div class="p-bar-fill" style="width: 45%"></div></div>
+                </div>
+            </div>
+
+            <div class="topic-card">
+                <div class="topic-icon" style="background: #F3E5F5;">🏠</div>
+                <div class="topic-info">
+                    <h3>家居整理收纳</h3>
+                    <p>共 70 题</p>
+                </div>
+                <div class="progress-mini">
+                    <span class="perc">90%</span>
+                    <div class="p-bar-bg"><div class="p-bar-fill" style="width: 90%"></div></div>
+                </div>
+            </div>
+
+            <div class="topic-card">
+                <div class="topic-icon" style="background: #E0F2F1;">🍲</div>
+                <div class="topic-info">
+                    <h3>家常菜烹饪技巧</h3>
+                    <p>共 88 题</p>
+                </div>
+                <div class="progress-mini">
+                    <span class="perc">20%</span>
+                    <div class="p-bar-bg"><div class="p-bar-fill" style="width: 20%"></div></div>
+                </div>
+            </div>
+
+            <div class="topic-card">
+                <div class="topic-icon" style="background: #FCE4EC;">🧴</div>
+                <div class="topic-info">
+                    <h3>洗衣护理知识</h3>
+                    <p>共 65 题</p>
+                </div>
+                <div class="progress-mini">
+                    <span class="perc">55%</span>
+                    <div class="p-bar-bg"><div class="p-bar-fill" style="width: 55%"></div></div>
+                </div>
+            </div>
+
+            <div class="topic-card">
+                <div class="topic-icon" style="background: #FFF9C4;">🌿</div>
+                <div class="topic-info">
+                    <h3>绿植养护常识</h3>
+                    <p>共 45 题</p>
+                </div>
+                <div class="progress-mini">
+                    <span class="perc" style="color:#ccc">0%</span>
+                    <div class="p-bar-bg"><div class="p-bar-fill" style="width: 0%"></div></div>
+                </div>
+            </div>
+
+            <div id="loading" style="text-align: center; padding: 20px; color: #999; font-size: 12px; display: none;">
+                加载中...
             </div>
         </div>
 
@@ -256,6 +319,63 @@
     }
     setInterval(updateTime, 1000);
     updateTime();
+
+    // 模拟分页加载
+    let currentPage = 1;
+    let isLoading = false;
+    const contentArea = document.querySelector('.content-area');
+    const screenContent = document.querySelector('.screen-content');
+    const loading = document.getElementById('loading');
+
+    screenContent.addEventListener('scroll', function() {
+        const scrollTop = screenContent.scrollTop;
+        const scrollHeight = screenContent.scrollHeight;
+        const clientHeight = screenContent.clientHeight;
+
+        // 当滚动到底部附近时加载更多
+        if (scrollTop + clientHeight >= scrollHeight - 100 && !isLoading) {
+            loadMoreTopics();
+        }
+    });
+
+    function loadMoreTopics() {
+        if (currentPage >= 3) return; // 最多加载3页
+        
+        isLoading = true;
+        loading.style.display = 'block';
+
+        // 模拟网络延迟
+        setTimeout(() => {
+            currentPage++;
+            
+            // 模拟新数据
+            const newTopics = [
+                { icon: '🛏️', bg: '#E8EAF6', title: '床铺整理规范', desc: '共 55 题', progress: 70 },
+                { icon: '🧽', bg: '#FFF8E1', title: '浴室清洁技巧', desc: '共 60 题', progress: 30 },
+                { icon: '👕', bg: '#E1F5FE', title: '衣物熨烫技能', desc: '共 40 题', progress: 15 }
+            ];
+
+            newTopics.forEach(topic => {
+                const card = document.createElement('div');
+                card.className = 'topic-card';
+                card.innerHTML = `
+                    <div class="topic-icon" style="background: ${topic.bg};">${topic.icon}</div>
+                    <div class="topic-info">
+                        <h3>${topic.title}</h3>
+                        <p>${topic.desc}</p>
+                    </div>
+                    <div class="progress-mini">
+                        <span class="perc">${topic.progress}%</span>
+                        <div class="p-bar-bg"><div class="p-bar-fill" style="width: ${topic.progress}%"></div></div>
+                    </div>
+                `;
+                contentArea.insertBefore(card, loading);
+            });
+
+            loading.style.display = 'none';
+            isLoading = false;
+        }, 800);
+    }
 </script>
 
 </body>

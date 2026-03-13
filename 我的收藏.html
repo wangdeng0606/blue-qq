@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>我的收藏</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: #e8eaf0;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+        }
+
+        /* 手机容器 */
+        .phone-container {
+            position: relative;
+            width: 375px;
+            height: 812px;
+            background: #000;
+            border-radius: 50px;
+            padding: 12px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+        }
+
+        .phone-frame {
+            width: 100%;
+            height: 100%;
+            background: #fff;
+            border-radius: 40px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* 刘海 */
+        .notch {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 180px;
+            height: 30px;
+            background: #000;
+            border-radius: 0 0 20px 20px;
+            z-index: 10;
+        }
+
+        /* 状态栏 */
+        .status-bar {
+            height: 44px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            padding: 0 24px 8px;
+            font-size: 14px;
+            font-weight: 600;
+            z-index: 99;
+        }
+
+        /* 内容区 */
+        .screen-content {
+            height: calc(100% - 44px);
+            overflow-y: auto;
+            background-color: #f7f9fc;
+        }
+
+        .screen-content::-webkit-scrollbar { display: none; }
+
+        /* 收藏列表 */
+        .collection-list {
+            padding: 15px;
+        }
+
+        .video-card {
+            background: white;
+            border-radius: 16px;
+            margin-bottom: 15px;
+            overflow: hidden;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+        }
+
+        .video-cover {
+            width: 100%;
+            height: 200px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .play-overlay {
+            width: 50px;
+            height: 50px;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            color: #1e3c72;
+        }
+
+        .video-duration {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+        }
+
+        .video-info {
+            padding: 15px;
+        }
+
+        .video-title {
+            font-size: 15px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 8px;
+            line-height: 1.4;
+        }
+
+        .video-meta {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+
+        .author-info {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .author-avatar {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            border: 1px solid #eee;
+        }
+
+        .author-name {
+            font-size: 12px;
+            color: #666;
+        }
+
+        .collect-time {
+            font-size: 11px;
+            color: #999;
+        }
+
+        .video-actions {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            padding-top: 10px;
+            border-top: 1px solid #f5f5f5;
+        }
+
+        .action-btn {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 12px;
+            color: #666;
+            background: none;
+            border: none;
+            cursor: pointer;
+        }
+
+        .action-btn.active {
+            color: #FFD700;
+        }
+
+        /* 空状态 */
+        .empty-state {
+            text-align: center;
+            padding: 80px 20px;
+        }
+
+        .empty-icon {
+            font-size: 60px;
+            margin-bottom: 20px;
+            opacity: 0.3;
+        }
+
+        .empty-text {
+            font-size: 14px;
+            color: #999;
+        }
+
+        /* 底部指示条 */
+        .home-indicator {
+            position: absolute;
+            bottom: 8px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 134px;
+            height: 5px;
+            background: #000;
+            border-radius: 3px;
+            opacity: 0.3;
+        }
+    </style>
+</head>
+<body>
+
+<div class="phone-container">
+    <div class="phone-frame">
+        <!-- 刘海 -->
+        <div class="notch"></div>
+        
+        <!-- 状态栏 -->
+        <div class="status-bar">
+            <span id="time">09:41</span>
+            <div style="display: flex; gap: 5px; align-items: center;">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12.01 21.49L23.64 7c-.45-.34-4.93-4-11.64-4C5.28 3 .81 6.66.36 7l11.63 14.49.01.01.01-.01z" fill-opacity=".3"/></svg>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M15.67 4H14V2h-4v2H8.33C7.6 4 7 4.6 7 5.33v15.33C7 21.4 7.6 22 8.33 22h7.33c.74 0 1.34-.6 1.34-1.33V5.33C17 4.6 16.4 4 15.67 4z"/></svg>
+            </div>
+        </div>
+
+        <div class="screen-content">
+            <div class="collection-list">
+                <!-- 收藏视频卡片 1 -->
+                <div class="video-card">
+                    <div class="video-cover">
+                        <div class="play-overlay">▶</div>
+                        <div class="video-duration">5:30</div>
+                    </div>
+                    <div class="video-info">
+                        <div class="video-title">新手月嫂必看：手把手教你如何正确给新生儿拍嗝，预防吐奶</div>
+                        <div class="video-meta">
+                            <div class="author-info">
+                                <img src="ai企鹅悬浮头像.png" class="author-avatar" alt="头像">
+                                <span class="author-name">张美琴</span>
+                            </div>
+                            <span class="collect-time">2天前</span>
+                        </div>
+                        <div class="video-actions">
+                            <button class="action-btn">
+                                <span>❤️</span>
+                                <span>1.2W</span>
+                            </button>
+                            <button class="action-btn active">
+                                <span>⭐</span>
+                                <span>已收藏</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 收藏视频卡片 2 -->
+                <div class="video-card">
+                    <div class="video-cover" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
+                        <div class="play-overlay">▶</div>
+                        <div class="video-duration">4:20</div>
+                    </div>
+                    <div class="video-info">
+                        <div class="video-title">全屋收纳整理实操：如何将衣柜利用率提升30%，小户型必备技能</div>
+                        <div class="video-meta">
+                            <div class="author-info">
+                                <img src="ai企鹅悬浮头像.png" class="author-avatar" alt="头像">
+                                <span class="author-name">李秀兰</span>
+                            </div>
+                            <span class="collect-time">5天前</span>
+                        </div>
+                        <div class="video-actions">
+                            <button class="action-btn">
+                                <span>❤️</span>
+                                <span>9.8K</span>
+                            </button>
+                            <button class="action-btn active">
+                                <span>⭐</span>
+                                <span>已收藏</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 收藏视频卡片 3 -->
+                <div class="video-card">
+                    <div class="video-cover" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">
+                        <div class="play-overlay">▶</div>
+                        <div class="video-duration">6:15</div>
+                    </div>
+                    <div class="video-info">
+                        <div class="video-title">厨房深度清洁技巧：油烟机清洗全流程演示</div>
+                        <div class="video-meta">
+                            <div class="author-info">
+                                <img src="ai企鹅悬浮头像.png" class="author-avatar" alt="头像">
+                                <span class="author-name">王大姐</span>
+                            </div>
+                            <span class="collect-time">1周前</span>
+                        </div>
+                        <div class="video-actions">
+                            <button class="action-btn">
+                                <span>❤️</span>
+                                <span>7.5K</span>
+                            </button>
+                            <button class="action-btn active">
+                                <span>⭐</span>
+                                <span>已收藏</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 底部Home指示条 -->
+        <div class="home-indicator"></div>
+    </div>
+</div>
+
+<script>
+    function updateTime() {
+        const now = new Date();
+        const h = String(now.getHours()).padStart(2, '0');
+        const m = String(now.getMinutes()).padStart(2, '0');
+        document.getElementById('time').textContent = h + ':' + m;
+    }
+    setInterval(updateTime, 1000);
+    updateTime();
+</script>
+
+</body>
+</html>

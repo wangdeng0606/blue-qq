@@ -193,6 +193,76 @@
             border-color: #FF4D4F;
         }
 
+        /* 简答题输入区 */
+        .answer-input-area {
+            background: white;
+            border: 2px solid #E0E6ED;
+            border-radius: 16px;
+            padding: 15px;
+            min-height: 200px;
+            position: relative;
+        }
+
+        .answer-textarea {
+            width: 100%;
+            min-height: 150px;
+            border: none;
+            outline: none;
+            font-size: 15px;
+            line-height: 1.6;
+            color: #333;
+            resize: none;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+        }
+
+        .answer-textarea::placeholder {
+            color: #999;
+        }
+
+        .input-toolbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px solid #F0F0F0;
+        }
+
+        .voice-input-btn {
+            background: rgba(30, 60, 114, 0.1);
+            border: none;
+            padding: 8px 16px;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: #1e3c72;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .voice-input-btn:active {
+            background: rgba(30, 60, 114, 0.2);
+            transform: scale(0.95);
+        }
+
+        .submit-answer-btn {
+            background: #1e3c72;
+            color: white;
+            border: none;
+            padding: 8px 24px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .submit-answer-btn:active {
+            transform: scale(0.95);
+        }
+
         /* 底部解析区（默认隐藏） */
         .analysis-box {
             margin-top: 30px;
@@ -222,15 +292,146 @@
             flex-shrink: 0;
         }
 
+        .btn-prev {
+            background: #F5F5F5;
+            color: #666;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 50px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-prev:active {
+            transform: scale(0.95);
+            background: #E8E8E8;
+        }
+
+        .btn-prev:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
         .btn-next {
             background: #1e3c72;
             color: white;
             border: none;
-            padding: 12px 40px;
+            padding: 12px 30px;
             border-radius: 50px;
             font-size: 16px;
             font-weight: bold;
             box-shadow: 0 4px 15px rgba(30, 60, 114, 0.3);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-next:active {
+            transform: scale(0.95);
+        }
+
+        /* 题目导航悬浮按钮 */
+        .nav-float-btn {
+            position: absolute;
+            bottom: 120px;
+            right: 20px;
+            width: 56px;
+            height: 56px;
+            background: #1e3c72;
+            border: none;
+            border-radius: 50%;
+            color: white;
+            font-size: 24px;
+            box-shadow: 0 4px 20px rgba(30, 60, 114, 0.4);
+            cursor: pointer;
+            transition: all 0.3s;
+            z-index: 999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .nav-float-btn:active {
+            transform: scale(0.9);
+        }
+
+        /* 题目导航面板 */
+        .question-nav-panel {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            transform: translateY(100%);
+            background: white;
+            border-radius: 20px 20px 0 0;
+            box-shadow: 0 -4px 20px rgba(0,0,0,0.15);
+            padding: 20px;
+            transition: transform 0.3s ease;
+            z-index: 1000;
+            max-height: 450px;
+            overflow-y: auto;
+        }
+
+        .question-nav-panel.show {
+            transform: translateY(0);
+        }
+
+        .nav-panel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #EEE;
+        }
+
+        .nav-panel-title {
+            font-size: 16px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .nav-close-btn {
+            background: none;
+            border: none;
+            font-size: 24px;
+            color: #999;
+            cursor: pointer;
+        }
+
+        .question-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 12px;
+        }
+
+        .question-num-btn {
+            aspect-ratio: 1;
+            border: 2px solid #E0E6ED;
+            background: white;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: bold;
+            color: #666;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .question-num-btn:active {
+            transform: scale(0.95);
+        }
+
+        .question-num-btn.current {
+            background: #1e3c72;
+            color: white;
+            border-color: #1e3c72;
+        }
+
+        .question-num-btn.answered {
+            background: #F0F4FA;
+            border-color: #1e3c72;
+            color: #1e3c72;
         }
 
         .hint-link { color: #999; font-size: 14px; text-decoration: none; }
@@ -288,8 +489,31 @@
         </div>
 
         <div class="quiz-footer">
-            <a href="#" class="hint-link">查看视频提示</a>
+            <button class="btn-prev" id="prevBtn" onclick="prevQuestion()" disabled>上一题</button>
             <button class="btn-next" onclick="nextQuestion()">下一题</button>
+        </div>
+
+        <!-- 题目导航悬浮按钮 -->
+        <button class="nav-float-btn" onclick="toggleNavPanel()">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="8" y1="6" x2="21" y2="6"/>
+                <line x1="8" y1="12" x2="21" y2="12"/>
+                <line x1="8" y1="18" x2="21" y2="18"/>
+                <line x1="3" y1="6" x2="3.01" y2="6"/>
+                <line x1="3" y1="12" x2="3.01" y2="12"/>
+                <line x1="3" y1="18" x2="3.01" y2="18"/>
+            </svg>
+        </button>
+
+        <!-- 题目导航面板 -->
+        <div class="question-nav-panel" id="navPanel">
+            <div class="nav-panel-header">
+                <div class="nav-panel-title">题目导航</div>
+                <button class="nav-close-btn" onclick="toggleNavPanel()">✕</button>
+            </div>
+            <div class="question-grid" id="questionGrid">
+                <!-- 动态生成题目编号 -->
+            </div>
         </div>
 
         <!-- 底部Home指示条 -->
@@ -298,6 +522,9 @@
 </div>
 
 <script>
+    let currentQuestion = 3; // 当前题号
+    const totalQuestions = 10;
+
     function updateTime() {
         const now = new Date();
         const h = String(now.getHours()).padStart(2, '0');
@@ -307,29 +534,143 @@
     setInterval(updateTime, 1000);
     updateTime();
 
-    function checkAnswer(element, isCorrect) {
-            // 禁止重复点击
-            const options = document.querySelectorAll('.option-item');
-            options.forEach(opt => opt.style.pointerEvents = 'none');
+    // 初始化题目导航
+    function initQuestionNav() {
+        const grid = document.getElementById('questionGrid');
+        for (let i = 1; i <= totalQuestions; i++) {
+            const btn = document.createElement('button');
+            btn.className = 'question-num-btn';
+            if (i === currentQuestion) btn.classList.add('current');
+            if (i < currentQuestion) btn.classList.add('answered');
+            btn.textContent = i;
+            btn.onclick = () => goToQuestion(i);
+            grid.appendChild(btn);
+        }
+    }
 
-            if (isCorrect) {
-                element.classList.add('correct');
-            } else {
-                element.classList.add('wrong');
-                // 自动高亮正确答案
-                options[1].classList.add('correct'); 
+    function toggleNavPanel() {
+        const panel = document.getElementById('navPanel');
+        panel.classList.toggle('show');
+    }
+
+    function goToQuestion(num) {
+        currentQuestion = num;
+        updateQuestionDisplay();
+        toggleNavPanel();
+    }
+
+    function updateQuestionDisplay() {
+        document.getElementById('currentNum').textContent = currentQuestion;
+        document.getElementById('progressBar').style.width = (currentQuestion / totalQuestions * 100) + '%';
+        
+        // 更新上一题按钮状态
+        document.getElementById('prevBtn').disabled = currentQuestion === 1;
+        
+        // 更新导航按钮状态
+        const buttons = document.querySelectorAll('.question-num-btn');
+        buttons.forEach((btn, index) => {
+            btn.classList.remove('current');
+            if (index + 1 === currentQuestion) {
+                btn.classList.add('current');
             }
+        });
+    }
 
-            // 显示解析
-            document.getElementById('analysisBox').style.display = 'block';
+    function prevQuestion() {
+        if (currentQuestion > 1) {
+            currentQuestion--;
+            updateQuestionDisplay();
+        }
+    }
+
+    function nextQuestion() {
+        if (currentQuestion < totalQuestions) {
+            currentQuestion++;
+            updateQuestionDisplay();
+            
+            if (currentQuestion === 4) {
+                // 切换到简答题示例
+                switchToEssayQuestion();
+            }
+        } else {
+            alert('已完成所有题目！');
+        }
+    }
+
+    function checkAnswer(element, isCorrect) {
+        // 禁止重复点击
+        const options = document.querySelectorAll('.option-item');
+        options.forEach(opt => opt.style.pointerEvents = 'none');
+
+        if (isCorrect) {
+            element.classList.add('correct');
+        } else {
+            element.classList.add('wrong');
+            // 自动高亮正确答案
+            options[1].classList.add('correct'); 
         }
 
-        function nextQuestion() {
-            alert('进入下一题，进度条将更新');
-            // 实际逻辑中这里会切换题目数据
-            document.getElementById('progressBar').style.width = '40%';
-            document.getElementById('currentNum').innerText = '4';
+        // 显示解析
+        document.getElementById('analysisBox').style.display = 'block';
+    }
+
+    function switchToEssayQuestion() {
+        const quizBody = document.querySelector('.quiz-body');
+        quizBody.innerHTML = `
+            <span class="question-tag">简答题</span>
+            <div class="question-text">请简述在照顾老人时，如何预防老人跌倒？至少列举三点注意事项。</div>
+
+            <div class="answer-input-area">
+                <textarea class="answer-textarea" id="essayAnswer" placeholder="请在此输入您的答案..."></textarea>
+                <div class="input-toolbar">
+                    <button class="voice-input-btn" onclick="startVoiceInput()">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/>
+                            <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
+                            <line x1="12" y1="19" x2="12" y2="23"/>
+                            <line x1="8" y1="23" x2="16" y2="23"/>
+                        </svg>
+                        语音输入
+                    </button>
+                    <button class="submit-answer-btn" onclick="submitEssayAnswer()">提交答案</button>
+                </div>
+            </div>
+
+            <div class="analysis-box" id="essayAnalysisBox" style="display: none;">
+                <div class="analysis-title">💡 参考答案</div>
+                <p style="font-size: 14px; color: #666; line-height: 1.6;">
+                    1. 保持地面干燥，及时清理水渍和障碍物<br>
+                    2. 在卫生间、楼梯等处安装扶手<br>
+                    3. 确保室内光线充足，夜间使用小夜灯<br>
+                    4. 为老人选择防滑鞋，避免穿拖鞋<br>
+                    5. 定期检查老人的视力和身体平衡能力
+                </p>
+            </div>
+        `;
+    }
+
+    function startVoiceInput() {
+        alert('语音输入功能启动（实际项目中调用语音识别API）');
+        // 实际项目中这里会调用语音识别API
+    }
+
+    function submitEssayAnswer() {
+        const answer = document.getElementById('essayAnswer').value.trim();
+        if (!answer) {
+            alert('请先输入答案');
+            return;
         }
-    </script>
+        
+        // 显示参考答案
+        document.getElementById('essayAnalysisBox').style.display = 'block';
+        alert('答案已提交！');
+    }
+
+    // 页面加载时初始化
+    window.onload = function() {
+        initQuestionNav();
+        updateQuestionDisplay();
+    };
+</script>
 </body>
 </html>

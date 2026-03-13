@@ -62,17 +62,20 @@
             z-index: 99;
         }
 
-        /* 顶部导航与前三名领奖台 (同步首页UI风格) */
+        /* 顶部导航与前三名领奖台 */
         .rank-header {
             background: linear-gradient(180deg, #1e3c72 0%, #2a5298 100%);
             padding: 45px 20px 20px;
             color: white; text-align: center;
-            border-bottom: 2px solid #FFD700; /* 金色分割线增强荣誉感 */
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
         }
 
         .rank-header h1 { font-size: 22px; font-weight: 800; margin-bottom: 25px; letter-spacing: 1px;}
 
-        /* 前三名大卡片 (与首页一致) */
+        /* 前三名大卡片 */
         .top-podium {
             display: flex; justify-content: space-around; align-items: flex-end;
             padding: 0 10px; margin-bottom: 5px;
@@ -83,18 +86,18 @@
             text-align: center; position: relative;
         }
 
-        /* 头像处理：采用成熟阿姨真实形象，增加3D边框 */
+        /* 头像处理 */
         .avatar-wrap { position: relative; margin-bottom: 12px; }
         .avatar-main {
             width: 60px; height: 60px;
             border-radius: 50%;
-            object-fit: cover; /* 确保阿姨头像不变形 */
+            object-fit: cover;
             border: 3px solid white;
             box-shadow: 0 5px 15px rgba(0,0,0,0.2);
             background: #eee;
         }
 
-        /* 冠亚季军差异化 (同步首页) */
+        /* 冠亚季军差异化 */
         .rank-1 .avatar-main { width: 85px; height: 85px; border-color: #FFD700; box-shadow: 0 0 20px rgba(255,215,0,0.6); }
         .rank-2 .avatar-main { border-color: #C0C0C0; }
         .rank-3 .avatar-main { border-color: #CD7F32; }
@@ -108,16 +111,13 @@
         .rank-1 .rank-tag { background: #FFD700; color: #856404; }
 
         .name { font-size: 14px; font-weight: 700; color: #fff; margin-top: 15px; }
-        .score { font-size: 11px; color: #fff; opacity: 0.9; margin-top: 4px; font-weight: 500; }
+        .score { font-size: 13px; color: #FFD700; margin-top: 4px; font-weight: 700; }
 
-        /* 排行榜列表区 (与首页列表风格统一) */
+        /* 排行榜列表区 */
         .rank-list {
             flex: 1; background: white;
-            border-radius: 30px 30px 0 0;
             padding: 20px;
             overflow-y: auto;
-            box-shadow: 0 -10px 30px rgba(0,0,0,0.05);
-            margin-top: -15px; /* 向上覆盖 Banner 边缘 */
         }
 
         .rank-list::-webkit-scrollbar { display: none; }
@@ -131,7 +131,7 @@
         .rank-item:active { background: #F0F4FA; }
         .rank-item:last-child { border-bottom: none; }
 
-        .rank-num { width: 35px; font-size: 17px; font-weight: 900; color: #999; text-align: center; color: #cbd5e1; }
+        .rank-num { width: 35px; font-size: 17px; font-weight: 900; color: #cbd5e1; text-align: center; }
 
         .item-avatar {
             width: 48px; height: 48px;
@@ -141,16 +141,10 @@
         }
 
         .item-info { flex: 1; }
-        .item-info .name-row { font-size: 16px; font-weight: 600; color: #1a1a1a; display: flex; align-items: center; }
-        .item-info .tag {
-            font-size: 11px; color: #1e3c72; background: rgba(30, 60, 114, 0.1);
-            padding: 2px 7px; border-radius: 4px; margin-left: 8px; font-weight: 500;
-        }
-        .item-info .desc { font-size: 12px; color: #8E8E93; margin-top: 5px; }
+        .item-info .name-row { font-size: 16px; font-weight: 600; color: #1a1a1a; }
 
         .item-score { text-align: right; }
         .score-val { color: #1e3c72; font-weight: 800; font-size: 19px; }
-        .score-unit { font-size: 10px; color: #999; }
 
         /* 底部固定：我的排名卡片 (磨砂玻璃专业感) */
         .my-rank-fixed {
@@ -190,7 +184,7 @@
         </div>
 
         <div class="rank-header">
-            <h1>蓝企鹅年度技能荣誉榜</h1>
+            <h1>积分排行榜</h1>
             
             <div class="top-podium">
                 <div class="podium-item rank-2">
@@ -199,17 +193,17 @@
                         <div class="rank-tag">NO.2</div>
                     </div>
                     <span class="name">李秀芳</span>
-                    <span class="score">98.5分 | 击败99%</span>
+                    <span class="score">8850积分</span>
                 </div>
 
                 <div class="podium-item rank-1">
                     <div class="crown">👑</div>
                     <div class="avatar-wrap">
                         <img src="https://i.pravatar.cc/100?u=2" class="avatar-main" alt="王美琴">
-                        <div class="rank-tag">年度标兵</div>
+                        <div class="rank-tag">TOP1</div>
                     </div>
                     <span class="name">王美琴</span>
-                    <span class="score">99.8分 | 荣誉满载</span>
+                    <span class="score">9900积分</span>
                 </div>
 
                 <div class="podium-item rank-3">
@@ -218,7 +212,7 @@
                         <div class="rank-tag">NO.3</div>
                     </div>
                     <span class="name">赵红梅</span>
-                    <span class="score">97.2分 | 稳步提升</span>
+                    <span class="score">8320积分</span>
                 </div>
             </div>
         </div>
@@ -228,12 +222,10 @@
                 <div class="rank-num">4</div>
                 <img class="item-avatar" src="https://i.pravatar.cc/100?u=a042581f4e29026704d" alt="阿姨">
                 <div class="item-info">
-                    <div class="name-row">孙丽丽<span class="tag">高级月嫂</span></div>
-                    <div class="desc">累计练习 1,450 题 | 击败98%</div>
+                    <div class="name-row">孙丽丽</div>
                 </div>
                 <div class="item-score">
-                    <div class="score-val">96.5</div>
-                    <div class="score-unit">平均分</div>
+                    <div class="score-val">7980</div>
                 </div>
             </div>
 
@@ -241,12 +233,10 @@
                 <div class="rank-num">5</div>
                 <img class="item-avatar" src="https://i.pravatar.cc/100?u=a042581f4e29026703d" alt="阿姨">
                 <div class="item-info">
-                    <div class="name-row">郭春燕<span class="tag">育儿嫂</span></div>
-                    <div class="desc">累计练习 1,280 题 | 技能扎实</div>
+                    <div class="name-row">郭春燕</div>
                 </div>
                 <div class="item-score">
-                    <div class="score-val">95.0</div>
-                    <div class="score-unit">平均分</div>
+                    <div class="score-val">7650</div>
                 </div>
             </div>
 
@@ -254,24 +244,54 @@
                 <div class="rank-num">6</div>
                 <img class="item-avatar" src="https://i.pravatar.cc/100?u=a042581f4e29026701d" alt="阿姨">
                 <div class="item-info">
-                    <div class="name-row">陈大姐<span class="tag">保洁主管</span></div>
-                    <div class="desc">累计练习 1,100 题 | 经验丰富</div>
+                    <div class="name-row">陈大姐</div>
                 </div>
                 <div class="item-score">
-                    <div class="score-val">94.8</div>
-                    <div class="score-unit">平均分</div>
+                    <div class="score-val">7420</div>
                 </div>
             </div>
 
-            <div class="rank-item" style="opacity: 0.6;">
+            <div class="rank-item">
                 <div class="rank-num">7</div>
                 <img class="item-avatar" src="https://i.pravatar.cc/100?u=a042581f4e29026702d" alt="阿姨">
                 <div class="item-info">
                     <div class="name-row">周美华</div>
-                    <div class="desc">累计练习 950 题</div>
                 </div>
                 <div class="item-score">
-                    <div class="score-val">93.2</div>
+                    <div class="score-val">7100</div>
+                </div>
+            </div>
+
+            <div class="rank-item">
+                <div class="rank-num">8</div>
+                <img class="item-avatar" src="https://i.pravatar.cc/100?u=a042581f4e29026706d" alt="阿姨">
+                <div class="item-info">
+                    <div class="name-row">刘芳</div>
+                </div>
+                <div class="item-score">
+                    <div class="score-val">6850</div>
+                </div>
+            </div>
+
+            <div class="rank-item">
+                <div class="rank-num">9</div>
+                <img class="item-avatar" src="https://i.pravatar.cc/100?u=a042581f4e29026707d" alt="阿姨">
+                <div class="item-info">
+                    <div class="name-row">张丽华</div>
+                </div>
+                <div class="item-score">
+                    <div class="score-val">6620</div>
+                </div>
+            </div>
+
+            <div class="rank-item">
+                <div class="rank-num">10</div>
+                <img class="item-avatar" src="https://i.pravatar.cc/100?u=a042581f4e29026708d" alt="阿姨">
+                <div class="item-info">
+                    <div class="name-row">杨秀英</div>
+                </div>
+                <div class="item-score">
+                    <div class="score-val">6380</div>
                 </div>
             </div>
         </div>
@@ -281,11 +301,9 @@
             <img class="item-avatar" src="https://i.pravatar.cc/100?u=a042581f4e29026705d" style="width: 42px; height: 42px; border: 2px solid #FFD700;">
             <div class="item-info">
                 <div class="name-row" style="color: white; font-size: 15px;">我 (张美玲)</div>
-                <div class="desc" style="color: rgba(255,255,255,0.7);">本周已提升了 3 个名次</div>
             </div>
             <div class="item-score">
-                <div class="score-val" style="color: #FFD700; font-size: 18px;">90.5</div>
-                <div class="score-unit" style="color:rgba(255,255,255,0.6)">当前得分</div>
+                <div class="score-val" style="color: #FFD700; font-size: 18px;">5280</div>
             </div>
         </div>
 
