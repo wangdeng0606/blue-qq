@@ -113,35 +113,115 @@
             opacity: 0.9;
         }
 
-        /* 金刚区 - 三个按钮一行 */
-        .nav-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 20px;
-            padding: 25px 20px;
+        /* 学习计划卡片 — 方案一：弥散背景 + 悬浮进度球 */
+        .plan-card-v1 {
+            margin: 20px 15px;
+            padding: 24px;
+            background: white;
+            border-radius: 28px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.04);
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
         }
-        .grid-item {
+        .plan-card-v1:active { opacity: 0.9; }
+
+        /* 弥散背景装饰 */
+        .plan-card-v1::before {
+            content: "";
+            position: absolute;
+            top: -50px; right: -50px;
+            width: 150px; height: 150px;
+            background: radial-gradient(circle, rgba(30,60,114,0.1) 0%, transparent 70%);
+            z-index: 0;
+        }
+
+        .v1-content {
+            position: relative;
+            z-index: 1;
             display: flex;
-            flex-direction: column;
             align-items: center;
-            gap: 10px;
+            justify-content: space-between;
         }
-        .icon-box {
+
+        .v1-info h4 {
+            font-size: 20px;
+            color: #1e3c72;
+            margin-bottom: 6px;
+        }
+
+        .v1-info p {
+            font-size: 13px;
+            color: #64748B;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        /* 悬浮进度球 */
+        .v1-progress-box {
+            position: relative;
             width: 60px;
             height: 60px;
-            background: white;
-            border-radius: 18px;
+        }
+
+        .v1-circle-svg {
+            transform: rotate(-90deg);
+            width: 60px;
+            height: 60px;
+        }
+
+        .v1-circle-bg {
+            fill: none;
+            stroke: #F1F5F9;
+            stroke-width: 5;
+        }
+
+        .v1-circle-fill {
+            fill: none;
+            stroke: #fbbf24;
+            stroke-width: 5;
+            stroke-linecap: round;
+            stroke-dasharray: 100;
+            stroke-dashoffset: 35; /* 65%进度 */
+        }
+
+        .v1-percent {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 14px;
+            font-weight: 800;
+            color: #f59e0b;
+        }
+
+        /* 底部信息栏 */
+        .v1-footer {
+            position: relative;
+            z-index: 1;
+            margin-top: 18px;
+            padding-top: 15px;
+            border-top: 1px solid #F1F5F9;
             display: flex;
-            justify-content: center;
+            justify-content: space-between;
             align-items: center;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-            color: #2a5298;
         }
-        .icon-box svg {
-            width: 32px;
-            height: 32px;
+
+        .v1-next-tag {
+            background: #EBF5FF;
+            color: #1e3c72;
+            font-size: 11px;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-weight: 600;
         }
-        .grid-item span { font-size: 15px; color: #333; font-weight: 600; }
+
+        .v1-action-text {
+            color: #1e3c72;
+            font-size: 13px;
+            font-weight: 600;
+        }
 
         /* 排行榜卡片 - 荣誉感升级 */
         .ranking-card {
@@ -202,93 +282,6 @@
         .name { font-size: 15px; font-weight: 600; color: #333; margin-top: 12px; display: block; }
         .score { font-size: 13px; color: #2a5298; font-weight: 700; }
 
-        /* 学习进度列表 */
-        .study-list { margin: 0 15px; display: flex; flex-direction: column; gap: 12px; }
-        .study-item {
-            background: white;
-            padding: 15px;
-            border-radius: 18px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-        .course-icon {
-            width: 40px;
-            height: 40px;
-            background: #edf2f9;
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #2a5298;
-        }
-        .course-info { flex: 1; }
-        .course-info h4 { font-size: 14px; margin-bottom: 4px; color: #333; }
-        .progress-mini { height: 4px; background: #eee; border-radius: 2px; width: 80px; }
-        .progress-inner { height: 100%; background: #2a5298; border-radius: 2px; }
-
-        /* 学习计划卡片 */
-        .learning-plan-card {
-            margin: 10px 15px 20px;
-            background: white;
-            border-radius: 24px;
-            padding: 20px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.04);
-        }
-
-        .video-preview-list {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-            margin-top: 20px;
-        }
-
-        .video-preview-item {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .video-thumb {
-            width: 90px;
-            height: 68px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-shrink: 0;
-        }
-
-        .play-icon {
-            color: white;
-            font-size: 24px;
-            opacity: 0.9;
-        }
-
-        .video-preview-info {
-            flex: 1;
-        }
-
-        .video-preview-title {
-            font-size: 16px;
-            color: #333;
-            margin-bottom: 6px;
-            font-weight: 500;
-            line-height: 1.4;
-        }
-
-        .video-preview-meta {
-            font-size: 13px;
-            color: #999;
-        }
-
-        .check-icon {
-            color: #4CAF50;
-            font-size: 24px;
-            font-weight: bold;
-        }
-
         /* 悬浮AI企鹅 - 磨砂专业感 */
         .ai-float {
             position: absolute;
@@ -319,7 +312,7 @@
         .ai-text div:first-child { font-size: 14px; font-weight: 700; color: #1e3c72; }
         .ai-text div:last-child { font-size: 11px; color: #666; }
 
-        /* 底部导航 */
+        /* 底部导航 - 5个tab */
         .tab-bar {
             position: absolute;
             bottom: 0;
@@ -328,23 +321,24 @@
             background: white;
             display: flex;
             justify-content: space-around;
+            align-items: flex-start;
             padding-top: 10px;
             border-top: 1px solid #eee;
         }
-        .tab-item { display: flex; flex-direction: column; align-items: center; gap: 4px; color: #999; }
+        .tab-item { display: flex; flex-direction: column; align-items: center; gap: 3px; color: #999; cursor: pointer; min-width: 48px; }
         .tab-item.active { color: #1e3c72; }
-        .tab-item svg { width: 24px; height: 24px; }
-        .tab-item span { font-size: 12px; font-weight: 500; }
+        .tab-item svg { width: 22px; height: 22px; }
+        .tab-item span { font-size: 10px; font-weight: 500; }
         
         .center-btn {
             position: relative;
-            top: -25px;
+            top: -22px;
         }
         .center-inner {
-            width: 54px;
-            height: 54px;
+            width: 50px;
+            height: 50px;
             background: #1e3c72;
-            border-radius: 18px;
+            border-radius: 16px;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -483,69 +477,30 @@
                 </div>
             </div>
 
-            <div class="nav-grid">
-                <div class="grid-item" id="guide-square" onclick="location.href='学习广场.html'" style="cursor: pointer;">
-                    <div class="icon-box">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+            <!-- 学习计划 — 方案一：弥散背景 + 悬浮进度球 -->
+            <div class="plan-card-v1" onclick="location.href='学习计划-地图版.html'">
+                <div class="v1-content">
+                    <div class="v1-info">
+                        <h4>母婴护理 · 高级班</h4>
+                        <p>
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+                            当前进行至第 2 阶段
+                        </p>
                     </div>
-                    <span>学习广场</span>
-                </div>
-                <div class="grid-item" id="guide-exam" onclick="location.href='题库中心.html'" style="cursor: pointer;">
-                    <div class="icon-box">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
-                    </div>
-                    <span>考核答题</span>
-                </div>
-                <div class="grid-item" id="guide-favorite" onclick="location.href='我的收藏.html'" style="cursor: pointer;">
-                    <div class="icon-box">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-                    </div>
-                    <span>我的收藏</span>
-                </div>
-            </div>
-
-        <div class="section-container">
-
-            <div class="learning-plan-card">
-                <div class="section-title">
-                    <h3>
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1e3c72" stroke-width="2" style="margin-right: 6px; vertical-align: middle;">
-                            <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/>
-                            <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>
+                    <div class="v1-progress-box">
+                        <svg class="v1-circle-svg" viewBox="0 0 36 36">
+                            <circle class="v1-circle-bg" cx="18" cy="18" r="16"></circle>
+                            <circle class="v1-circle-fill" cx="18" cy="18" r="16"></circle>
                         </svg>
-                        学习计划
-                    </h3>
-                    <span class="more" onclick="location.href='学习广场.html'" style="cursor: pointer;">查看全部 ></span>
+                        <div class="v1-percent">65%</div>
+                    </div>
                 </div>
-                <div class="video-preview-list">
-                    <div class="video-preview-item">
-                        <div class="video-thumb">
-                            <div class="play-icon">▶</div>
-                        </div>
-                        <div class="video-preview-info">
-                            <div class="video-preview-title">新生儿拍嗝技巧</div>
-                            <div class="video-preview-meta">5:30 · 已完成</div>
-                        </div>
-                        <div class="check-icon">✓</div>
+                <div class="v1-footer">
+                    <div>
+                        <span class="v1-next-tag">待学习</span>
+                        <span style="font-size: 13px; color: #333; margin-left: 8px;">冲泡奶粉标准流程</span>
                     </div>
-                    <div class="video-preview-item">
-                        <div class="video-thumb">
-                            <div class="play-icon">▶</div>
-                        </div>
-                        <div class="video-preview-info">
-                            <div class="video-preview-title">婴儿洗澡注意事项</div>
-                            <div class="video-preview-meta">4:20</div>
-                        </div>
-                    </div>
-                    <div class="video-preview-item">
-                        <div class="video-thumb">
-                            <div class="play-icon">▶</div>
-                        </div>
-                        <div class="video-preview-info">
-                            <div class="video-preview-title">新生儿抚触按摩</div>
-                            <div class="video-preview-meta">6:10</div>
-                        </div>
-                    </div>
+                    <div class="v1-action-text">点击继续 ›</div>
                 </div>
             </div>
             
@@ -609,10 +564,18 @@
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
                 <span>首页</span>
             </div>
+            <div class="tab-item" onclick="location.href='学习广场.html'">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg>
+                <span>学习广场</span>
+            </div>
             <div class="tab-item center-btn" onclick="location.href='视频录制.html'">
                 <div class="center-inner">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
                 </div>
+            </div>
+            <div class="tab-item" onclick="location.href='我的收藏.html'">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                <span>我的收藏</span>
             </div>
             <div class="tab-item" onclick="location.href='我的.html'">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
@@ -643,19 +606,14 @@
     // 新手引导功能
     const guideSteps = [
         {
-            element: '#guide-square',
-            title: '学习广场',
-            description: '这里可以观看其他阿姨分享的工作视频，学习专业技能和经验'
+            element: '.plan-card-v1',
+            title: '学习计划',
+            description: '点击进入你的专属学习路线，按阶段完成视频学习和考核'
         },
         {
-            element: '#guide-exam',
-            title: '考核答题',
-            description: '通过答题巩固学到的知识，完成考核可以获得积分奖励'
-        },
-        {
-            element: '#guide-favorite',
-            title: '我的收藏',
-            description: '收藏喜欢的视频，方便随时回看学习'
+            element: '.ranking-card',
+            title: '积分排行榜',
+            description: '查看积分排名，和其他阿姨一起比拼学习成果'
         }
     ];
 

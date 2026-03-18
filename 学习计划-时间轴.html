@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>蓝企鹅培训计划 - 时间轴版</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: #e8eaf0;
+            font-family: -apple-system, "SF Pro Text", "PingFang SC", sans-serif;
+        }
+
+        /* 手机容器 — 统一标准 */
+        .phone-container {
+            position: relative;
+            width: 375px;
+            height: 812px;
+            background: #000;
+            border-radius: 50px;
+            padding: 12px;
+            box-shadow: 0 40px 100px rgba(0, 0, 0, 0.8);
+        }
+
+        .phone-frame {
+            width: 100%;
+            height: 100%;
+            background: #F4F7FA;
+            border-radius: 40px;
+            overflow: hidden;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .notch {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 160px;
+            height: 30px;
+            background: #000;
+            border-radius: 0 0 18px 18px;
+            z-index: 100;
+        }
+
+        .status-bar {
+            height: 44px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            padding: 0 24px 8px;
+            font-size: 14px;
+            font-weight: 600;
+            z-index: 99;
+        }
+
+        /* 顶部看板 */
+        .header-dashboard {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            padding: 18px 22px 22px;
+            color: white;
+            position: relative;
+            overflow: hidden;
+            /* 入场动画 */
+            opacity: 0;
+            transform: translateY(-20px);
+            animation: headerSlideIn 0.8s 0.3s ease forwards;
+        }
+
+        .header-dashboard::after {
+            content: '';
+            position: absolute;
+            right: -30px;
+            top: -30px;
+            width: 130px;
+            height: 130px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 50%;
+        }
+
+        @keyframes headerSlideIn {
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .title-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .title-row h1 { font-size: 20px; font-weight: 700; }
+
+        .progress-box {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(5px);
+            padding: 12px 16px;
+            border-radius: 14px;
+        }
+
+        .progress-text {
+            font-size: 13px;
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .progress-bar-bg {
+            height: 6px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            width: 33%;
+            background: #FFD700;
+            border-radius: 3px;
+        }
+
+        /* 时间轴容器 */
+        .timeline-container {
+            flex: 1;
+            padding: 24px 20px;
+            overflow-y: auto;
+            background-color: #F4F7FA;
+        }
+
+        .timeline-container::-webkit-scrollbar { display: none; }
+
+        /* 时间轴节点 */
+        .timeline-item {
+            display: flex;
+            margin-bottom: 24px;
+            position: relative;
+            /* 入场动画 */
+            opacity: 0;
+            transform: translateX(-30px);
+            animation: itemSlideIn 0.7s ease forwards;
+        }
+
+        @keyframes itemSlideIn {
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        .timeline-left {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-right: 16px;
+            position: relative;
+        }
+
+        .timeline-line {
+            position: absolute;
+            top: 24px;
+            bottom: -24px;
+            width: 2px;
+            background-color: #E0E7F1;
+            z-index: 1;
+        }
+
+        .timeline-item:last-child .timeline-line { display: none; }
+
+        .status-dot {
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            background-color: white;
+            border: 2px solid #E0E7F1;
+            z-index: 2;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .timeline-card {
+            flex: 1;
+            background: white;
+            border-radius: 18px;
+            padding: 16px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.04);
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+
+        .card-title {
+            font-size: 15px;
+            color: #1a1a1a;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .card-subtitle {
+            font-size: 12px;
+            color: #999;
+        }
+
+        .action-btn {
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            flex-shrink: 0;
+        }
+
+        /* 视频手风琴 */
+        .video-accordion {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            margin-top: 0;
+            border-top: 1px solid transparent;
+        }
+
+        .video-accordion.expanded {
+            max-height: 400px;
+            margin-top: 14px;
+            padding-top: 14px;
+            border-top-color: #F0F0F0;
+        }
+
+        .video-row {
+            display: flex;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px dashed #F0F0F0;
+        }
+
+        .video-row:last-child { border-bottom: none; }
+
+        .play-icon {
+            width: 34px;
+            height: 34px;
+            background: #EBF0FA;
+            color: #1e3c72;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-right: 12px;
+            font-size: 12px;
+            flex-shrink: 0;
+        }
+
+        .video-name { flex: 1; font-size: 14px; color: #333; }
+        .video-duration { font-size: 12px; color: #999; flex-shrink: 0; }
+
+        /* 自动聚焦高亮 */
+        .video-row.auto-focus {
+            background: #EBF0FA;
+            border-radius: 10px;
+            padding: 10px 8px;
+            margin: 2px -8px;
+            animation: focusPulse 1.8s ease;
+        }
+
+        @keyframes focusPulse {
+            0% { box-shadow: 0 0 0 0 rgba(30,60,114,0.25); }
+            60% { box-shadow: 0 0 0 8px rgba(30,60,114,0); }
+            100% { box-shadow: 0 0 0 0 rgba(30,60,114,0); }
+        }
+
+        /* === 状态样式 === */
+
+        /* 已完成 */
+        .completed .status-dot {
+            background: #1e3c72;
+            border-color: #1e3c72;
+            color: white;
+        }
+        .completed .timeline-line { background-color: #1e3c72; }
+        .completed .action-btn {
+            background: #EBF0FA;
+            color: #1e3c72;
+        }
+
+        /* 进行中 */
+        .active .status-dot {
+            border-color: #FFD700;
+            color: #D97706;
+            background: #FEF3C7;
+            box-shadow: 0 0 0 4px rgba(255,215,0,0.2);
+        }
+        .active .timeline-card {
+            border-color: #FFD700;
+            box-shadow: 0 6px 20px rgba(255, 215, 0, 0.12);
+        }
+        .active .action-btn {
+            background: #1e3c72;
+            color: white;
+        }
+
+        /* 未解锁 */
+        .locked .timeline-card {
+            background: transparent;
+            border: 1px dashed #D1D5DB;
+            box-shadow: none;
+        }
+        .locked .card-title,
+        .locked .card-subtitle { color: #B0B0B0; }
+        .locked .action-btn {
+            background: transparent;
+            color: #B0B0B0;
+            border: 1px solid #D1D5DB;
+        }
+
+        .home-indicator {
+            position: absolute;
+            bottom: 8px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 120px;
+            height: 5px;
+            background: #000;
+            border-radius: 10px;
+            opacity: 0.1;
+        }
+    </style>
+</head>
+<body>
+
+<div class="phone-container">
+    <div class="phone-frame">
+        <div class="notch"></div>
+        <div class="status-bar">
+            <span id="time">09:41</span>
+            <div style="display: flex; gap: 5px; align-items: center;">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12.01 21.49L23.64 7c-.45-.34-4.93-4-11.64-4C5.28 3 .81 6.66.36 7l11.63 14.49.01.01.01-.01z" fill-opacity=".3"/></svg>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M15.67 4H14V2h-4v2H8.33C7.6 4 7 4.6 7 5.33v15.33C7 21.4 7.6 22 8.33 22h7.33c.74 0 1.34-.6 1.34-1.33V5.33C17 4.6 16.4 4 15.67 4z"/></svg>
+            </div>
+        </div>
+
+        <div class="header-dashboard">
+            <div class="title-row">
+                <h1>培训进阶之路</h1>
+            </div>
+            <div class="progress-box">
+                <div class="progress-text">
+                    <span>总课程进度</span>
+                    <span>33%</span>
+                </div>
+                <div class="progress-bar-bg">
+                    <div class="progress-bar-fill"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="timeline-container" id="timelineContainer">
+
+            <div class="timeline-item completed" style="animation-delay: 0.6s;">
+                <div class="timeline-left">
+                    <div class="status-dot">✓</div>
+                    <div class="timeline-line"></div>
+                </div>
+                <div class="timeline-card">
+                    <div class="card-header">
+                        <div>
+                            <h3 class="card-title">阶段一：服务规范与礼仪</h3>
+                            <p class="card-subtitle">共 3 节课 · 已掌握</p>
+                        </div>
+                        <button class="action-btn">去复习</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="timeline-item active" style="animation-delay: 0.9s;">
+                <div class="timeline-left">
+                    <div class="status-dot">2</div>
+                    <div class="timeline-line"></div>
+                </div>
+                <div class="timeline-card" id="activeCard">
+                    <div class="card-header">
+                        <div>
+                            <h3 class="card-title">阶段二：母婴日常护理</h3>
+                            <p class="card-subtitle">共 4 节课 · 待完成</p>
+                        </div>
+                        <button class="action-btn" onclick="toggleAccordion()">继续学习</button>
+                    </div>
+                    <div class="video-accordion" id="videoList">
+                        <div class="video-row" style="color: #999; text-decoration: line-through;">
+                            <div class="play-icon">✓</div>
+                            <div class="video-name" style="color: #999;">新生儿抱姿教学</div>
+                            <div class="video-duration">已看完</div>
+                        </div>
+                        <div class="video-row auto-focus">
+                            <div class="play-icon" style="background:#1e3c72; color:white;">▶</div>
+                            <div class="video-name" style="font-weight: 600;">冲泡奶粉的标准流程</div>
+                            <div class="video-duration" style="color: #1e3c72; font-weight: 600;">去观看</div>
+                        </div>
+                        <div class="video-row">
+                            <div class="play-icon" style="background:#F3F4F6; color:#B0B0B0;">🔒</div>
+                            <div class="video-name" style="color: #B0B0B0;">婴儿洗澡实操演示</div>
+                            <div class="video-duration">未解锁</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="timeline-item locked" style="animation-delay: 1.2s;">
+                <div class="timeline-left">
+                    <div class="status-dot">🔒</div>
+                    <div class="timeline-line"></div>
+                </div>
+                <div class="timeline-card">
+                    <div class="card-header">
+                        <div>
+                            <h3 class="card-title">阶段三：科学辅食制作</h3>
+                            <p class="card-subtitle">需先通过阶段二考核</p>
+                        </div>
+                        <button class="action-btn">未解锁</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="timeline-item locked" style="animation-delay: 1.5s;">
+                <div class="timeline-left">
+                    <div class="status-dot">🔒</div>
+                    <div class="timeline-line"></div>
+                </div>
+                <div class="timeline-card">
+                    <div class="card-header">
+                        <div>
+                            <h3 class="card-title">阶段四：突发急救常识</h3>
+                            <p class="card-subtitle">最终阶段</p>
+                        </div>
+                        <button class="action-btn">未解锁</button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="home-indicator"></div>
+    </div>
+</div>
+
+<script>
+    function toggleAccordion() {
+        document.getElementById('videoList').classList.toggle('expanded');
+    }
+
+    // 入场：等节点动画完成后，自动展开当前阶段并滚动聚焦
+    setTimeout(() => {
+        const videoList = document.getElementById('videoList');
+        videoList.classList.add('expanded');
+
+        // 滚动到当前阶段
+        setTimeout(() => {
+            const activeCard = document.getElementById('activeCard');
+            if (activeCard) {
+                activeCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+        }, 600);
+    }, 1800);
+
+    // 时间
+    function updateTime() {
+        const now = new Date();
+        const h = String(now.getHours()).padStart(2, '0');
+        const m = String(now.getMinutes()).padStart(2, '0');
+        document.getElementById('time').textContent = h + ':' + m;
+    }
+    setInterval(updateTime, 1000);
+    updateTime();
+</script>
+
+</body>
+</html>

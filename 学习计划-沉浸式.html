@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>蓝企鹅 - 沉浸式学习计划</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: #e8eaf0;
+            font-family: -apple-system, "SF Pro Text", "PingFang SC", sans-serif;
+        }
+
+        /* 手机容器 — 统一标准 */
+        .phone-container {
+            position: relative;
+            width: 375px;
+            height: 812px;
+            background: #000;
+            border-radius: 50px;
+            padding: 12px;
+            box-shadow: 0 40px 100px rgba(0, 0, 0, 0.8);
+        }
+
+        .phone-frame {
+            width: 100%;
+            height: 100%;
+            background: #F4F7FA;
+            border-radius: 40px;
+            overflow: hidden;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .notch {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 160px;
+            height: 30px;
+            background: #000;
+            border-radius: 0 0 18px 18px;
+            z-index: 100;
+        }
+
+        .status-bar {
+            height: 44px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            padding: 0 24px 8px;
+            font-size: 14px;
+            font-weight: 600;
+            z-index: 99;
+        }
+
+        /* 顶部欢迎语 */
+        .top-bar {
+            padding: 16px 25px 18px;
+            background: white;
+            /* 入场动画 */
+            opacity: 0;
+            transform: translateY(-15px);
+            animation: fadeDown 0.8s 0.4s ease forwards;
+        }
+
+        @keyframes fadeDown {
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .top-bar h2 {
+            font-size: 22px;
+            color: #1e3c72;
+            font-weight: 700;
+        }
+
+        .top-bar p {
+            margin-top: 4px;
+            font-size: 13px;
+            color: #999;
+        }
+
+        /* 核心卡片容器 */
+        .stage-slider {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding-top: 25px;
+            /* 入场动画 */
+            opacity: 0;
+            transform: scale(0.9) translateY(30px);
+            animation: cardRise 1s 0.8s cubic-bezier(0.2, 0.8, 0.3, 1) forwards;
+        }
+
+        @keyframes cardRise {
+            to { opacity: 1; transform: scale(1) translateY(0); }
+        }
+
+        /* 阶段大卡片 */
+        .main-card {
+            width: 300px;
+            height: 420px;
+            background: white;
+            border-radius: 28px;
+            box-shadow: 0 15px 40px rgba(30, 60, 114, 0.12);
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.3s ease;
+        }
+
+        .main-card:active { transform: scale(0.97); }
+
+        /* 卡片顶部图 */
+        .card-image {
+            width: 100%;
+            height: 200px;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 60%, #4a7cc9 100%);
+            position: relative;
+            display: flex;
+            align-items: flex-end;
+            padding: 20px;
+        }
+
+        .card-image-text {
+            color: white;
+            font-size: 18px;
+            font-weight: 700;
+            text-shadow: 0 2px 6px rgba(0,0,0,0.2);
+        }
+
+        .card-image-sub {
+            color: rgba(255,255,255,0.8);
+            font-size: 12px;
+            margin-top: 4px;
+        }
+
+        /* 卡片装饰圆 */
+        .card-image::after {
+            content: '';
+            position: absolute;
+            right: -20px;
+            top: -20px;
+            width: 100px;
+            height: 100px;
+            background: rgba(255,255,255,0.08);
+            border-radius: 50%;
+        }
+
+        /* 卡片内容区 */
+        .card-content { padding: 20px; }
+
+        .video-stats {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 18px;
+        }
+
+        .stat-item {
+            font-size: 12px;
+            color: #1e3c72;
+            background: #EBF0FA;
+            padding: 5px 12px;
+            border-radius: 10px;
+            font-weight: 500;
+        }
+
+        .card-info h4 {
+            font-size: 15px;
+            color: #1a1a1a;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .card-info p {
+            font-size: 12px;
+            color: #999;
+        }
+
+        /* 圆形进度环 */
+        .progress-container {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            margin-top: 18px;
+        }
+
+        .circle-progress {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: conic-gradient(#1e3c72 65%, #E0E7F1 0);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            flex-shrink: 0;
+            /* 进度环入场动画 */
+            opacity: 0;
+            animation: ringAppear 0.8s 1.6s ease forwards;
+        }
+
+        @keyframes ringAppear {
+            from { opacity: 0; transform: rotate(-90deg); }
+            to { opacity: 1; transform: rotate(0deg); }
+        }
+
+        .circle-progress::before {
+            content: "65%";
+            position: absolute;
+            width: 40px;
+            height: 40px;
+            background: white;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 12px;
+            font-weight: 800;
+            color: #1e3c72;
+        }
+
+        .progress-label {
+            font-size: 12px;
+            color: #999;
+        }
+
+        /* 阶段指示器 */
+        .dots {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 22px;
+            /* 入场动画 */
+            opacity: 0;
+            animation: fadeIn 0.6s 1.4s ease forwards;
+        }
+
+        @keyframes fadeIn {
+            to { opacity: 1; }
+        }
+
+        .dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #D6DEE8;
+            transition: all 0.3s;
+        }
+
+        .dot.active-dot {
+            width: 24px;
+            background: #1e3c72;
+            border-radius: 4px;
+        }
+
+        /* 底部操作区 */
+        .action-area {
+            padding: 18px 30px 35px;
+            text-align: center;
+            /* 入场动画 */
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeUp 0.7s 1.8s ease forwards;
+        }
+
+        @keyframes fadeUp {
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .start-btn {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            border: none;
+            width: 100%;
+            padding: 16px;
+            border-radius: 50px;
+            font-size: 17px;
+            font-weight: 700;
+            box-shadow: 0 10px 25px rgba(30, 60, 114, 0.3);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .start-btn:active {
+            transform: scale(0.96);
+            box-shadow: 0 5px 15px rgba(30, 60, 114, 0.3);
+        }
+
+        .action-hint {
+            font-size: 12px;
+            color: #B0B0B0;
+            margin-top: 12px;
+        }
+
+        .home-indicator {
+            position: absolute;
+            bottom: 8px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 120px;
+            height: 5px;
+            background: #000;
+            border-radius: 10px;
+            opacity: 0.1;
+        }
+    </style>
+</head>
+<body>
+
+<div class="phone-container">
+    <div class="phone-frame">
+        <div class="notch"></div>
+        <div class="status-bar">
+            <span id="time">09:41</span>
+            <div style="display: flex; gap: 5px; align-items: center;">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12.01 21.49L23.64 7c-.45-.34-4.93-4-11.64-4C5.28 3 .81 6.66.36 7l11.63 14.49.01.01.01-.01z" fill-opacity=".3"/></svg>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M15.67 4H14V2h-4v2H8.33C7.6 4 7 4.6 7 5.33v15.33C7 21.4 7.6 22 8.33 22h7.33c.74 0 1.34-.6 1.34-1.33V5.33C17 4.6 16.4 4 15.67 4z"/></svg>
+            </div>
+        </div>
+
+        <div class="top-bar">
+            <h2>下午好，王阿姨</h2>
+            <p>今日建议学习：20 分钟</p>
+        </div>
+
+        <div class="stage-slider">
+            <div class="main-card">
+                <div class="card-image">
+                    <div>
+                        <div class="card-image-text">阶段二：厨房深度清洁</div>
+                        <div class="card-image-sub">掌握专业清洁技能</div>
+                    </div>
+                </div>
+
+                <div class="card-content">
+                    <div class="video-stats">
+                        <span class="stat-item">🎬 5 个视频</span>
+                        <span class="stat-item">⏱ 45 分钟</span>
+                    </div>
+
+                    <div class="card-info">
+                        <h4>已学习至：抽油烟机拆洗流程</h4>
+                        <p>继续完成剩余课程即可解锁下一阶段</p>
+                    </div>
+
+                    <div class="progress-container">
+                        <div class="circle-progress"></div>
+                        <div class="progress-label">整体完成度</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="dots">
+                <div class="dot"></div>
+                <div class="dot active-dot"></div>
+                <div class="dot"></div>
+                <div class="dot"></div>
+            </div>
+        </div>
+
+        <div class="action-area">
+            <button class="start-btn">进入本阶段学习</button>
+            <p class="action-hint">完成当前阶段后，将自动解锁下一阶段</p>
+        </div>
+
+        <div class="home-indicator"></div>
+    </div>
+</div>
+
+<script>
+    function updateTime() {
+        const now = new Date();
+        const h = String(now.getHours()).padStart(2, '0');
+        const m = String(now.getMinutes()).padStart(2, '0');
+        document.getElementById('time').textContent = h + ':' + m;
+    }
+    setInterval(updateTime, 1000);
+    updateTime();
+</script>
+
+</body>
+</html>

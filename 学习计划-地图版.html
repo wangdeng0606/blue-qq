@@ -1,0 +1,875 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>成长培训计划 - 地图版</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: #e8eaf0;
+            font-family: -apple-system, "SF Pro Text", "PingFang SC", sans-serif;
+        }
+
+        /* 手机容器 — 与其他页面统一 */
+        .phone-container {
+            position: relative;
+            width: 375px;
+            height: 812px;
+            background: #000;
+            border-radius: 50px;
+            padding: 12px;
+            box-shadow: 0 40px 100px rgba(0, 0, 0, 0.8);
+        }
+
+        .phone-frame {
+            width: 100%;
+            height: 100%;
+            background: #F4F7FA;
+            border-radius: 40px;
+            overflow: hidden;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .notch {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 160px;
+            height: 30px;
+            background: #000;
+            border-radius: 0 0 18px 18px;
+            z-index: 100;
+        }
+
+        /* 状态栏 */
+        .status-bar {
+            height: 44px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            padding: 0 24px 8px;
+            font-size: 14px;
+            font-weight: 600;
+            z-index: 99;
+        }
+
+        /* 顶部头部 */
+        .page-header {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            padding: 18px 20px 22px;
+            color: white;
+            position: relative;
+            overflow: hidden;
+            border-bottom-left-radius: 24px;
+            border-bottom-right-radius: 24px;
+            box-shadow: 0 4px 12px rgba(30, 60, 114, 0.2);
+            z-index: 10;
+        }
+
+        .page-header::after {
+            content: '';
+            position: absolute;
+            right: -30px;
+            top: -30px;
+            width: 130px;
+            height: 130px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 50%;
+        }
+
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .header-top h1 { font-size: 22px; font-weight: 700; }
+
+        .progress-badge {
+            background: rgba(255,255,255,0.2);
+            backdrop-filter: blur(5px);
+            padding: 5px 14px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .header-desc { font-size: 14px; opacity: 0.85; }
+
+        /* 地图容器 */
+        .map-container {
+            flex: 1;
+            overflow-y: auto;
+            position: relative;
+            scroll-behavior: smooth;
+            background: #F4F7FA;
+            background-image:
+                radial-gradient(circle at 15% 20%, rgba(30,60,114,0.06) 0%, transparent 40%),
+                radial-gradient(circle at 85% 50%, rgba(42,82,152,0.05) 0%, transparent 35%),
+                radial-gradient(circle at 50% 80%, rgba(255,215,0,0.03) 0%, transparent 30%);
+        }
+
+        .map-container::-webkit-scrollbar { display: none; }
+
+        .map-canvas {
+            position: relative;
+            width: 100%;
+            min-height: 100%;
+        }
+
+        /* SVG层 */
+        .svg-path {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        /* 装饰元素 */
+        .deco-dot {
+            position: absolute;
+            border-radius: 50%;
+            z-index: 0;
+            opacity: 0.5;
+        }
+
+        .deco-ring {
+            position: absolute;
+            border-radius: 50%;
+            border: 2px solid rgba(30, 60, 114, 0.06);
+            z-index: 0;
+        }
+
+        .deco-diamond {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            background: rgba(30, 60, 114, 0.07);
+            transform: rotate(45deg);
+            border-radius: 2px;
+            z-index: 0;
+        }
+
+        /* 节点 */
+        .node {
+            position: absolute;
+            z-index: 5;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            cursor: pointer;
+            transform: translate(-50%, -50%);
+            transition: transform 0.25s;
+            /* 入场动画初始状态 */
+            opacity: 0;
+            animation: nodeAppear 0.5s ease forwards;
+        }
+
+        .node:active {
+            transform: translate(-50%, -50%) scale(0.93);
+        }
+
+        @keyframes nodeAppear {
+            from { opacity: 0; transform: translate(-50%, -50%) scale(0.6); }
+            to { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+        }
+
+        .node-icon {
+            width: 66px;
+            height: 66px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 22px;
+            background: white;
+            border: 4px solid #E0E7F1;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+            transition: all 0.3s;
+        }
+
+        .node-label { margin-top: 10px; text-align: center; }
+
+        .node-title {
+            font-size: 15px;
+            font-weight: 700;
+            color: #1a1a1a;
+            background: rgba(255,255,255,0.9);
+            backdrop-filter: blur(4px);
+            padding: 5px 14px;
+            border-radius: 14px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            white-space: nowrap;
+        }
+
+        .node-sub {
+            font-size: 12px;
+            color: #999;
+            margin-top: 4px;
+        }
+
+        /* 节点状态 */
+        .node.completed .node-icon {
+            border-color: #1e3c72;
+            background: linear-gradient(135deg, #EBF0FA, #dce6f7);
+            color: #1e3c72;
+        }
+
+        .node.active .node-icon {
+            border-color: #FFD700;
+            background: linear-gradient(135deg, #FEF3C7, #FDE68A);
+            color: #D97706;
+            animation: nodePulse 2s infinite;
+        }
+
+        .node.locked .node-icon {
+            background: #F3F4F6;
+            color: #B0B0B0;
+            border-color: #E5E7EB;
+        }
+
+        .node.locked .node-title { color: #B0B0B0; }
+
+        /* 当前阶段高亮环 */
+        .node.active .node-icon::after {
+            content: '';
+            position: absolute;
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            border: 2px dashed rgba(255,215,0,0.4);
+            animation: spinRing 8s linear infinite;
+        }
+
+        @keyframes spinRing {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        @keyframes nodePulse {
+            0% { box-shadow: 0 0 0 0 rgba(255, 215, 0, 0.4); }
+            70% { box-shadow: 0 0 0 14px rgba(255, 215, 0, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(255, 215, 0, 0); }
+        }
+
+        /* 遮罩层 */
+        .overlay {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0,0,0,0.45);
+            z-index: 15;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s;
+        }
+
+        .overlay.active-overlay {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        /* 底部抽屉 */
+        .bottom-sheet {
+            position: absolute;
+            bottom: 0; left: 0;
+            width: 100%;
+            background: white;
+            border-top-left-radius: 28px;
+            border-top-right-radius: 28px;
+            box-shadow: 0 -10px 30px rgba(0,0,0,0.1);
+            transform: translateY(100%);
+            transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.3, 1);
+            z-index: 20;
+            max-height: 55%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .bottom-sheet.open { transform: translateY(0); }
+
+        .sheet-handle {
+            width: 36px; height: 4px;
+            background: #DDD;
+            border-radius: 2px;
+            margin: 10px auto 0;
+        }
+
+        .sheet-header {
+            padding: 14px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #F0F0F0;
+            flex-shrink: 0;
+        }
+
+        .sheet-header h3 { font-size: 18px; color: #1a1a1a; font-weight: 700; }
+        .sheet-progress { font-size: 13px; color: #2a5298; font-weight: 600; }
+
+        .close-btn {
+            background: #F3F4F6;
+            border: none;
+            width: 30px; height: 30px;
+            border-radius: 50%;
+            font-size: 16px;
+            color: #999;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .video-list {
+            padding: 15px 20px 30px;
+            overflow-y: auto;
+            flex: 1;
+        }
+
+        .video-list::-webkit-scrollbar { display: none; }
+
+        .video-item {
+            display: flex;
+            align-items: center;
+            padding: 12px;
+            background: #F8FAFC;
+            border-radius: 14px;
+            margin-bottom: 10px;
+            gap: 12px;
+            transition: all 0.3s;
+        }
+
+        .video-item:last-child { margin-bottom: 0; }
+
+        /* 自动聚焦的视频项高亮 */
+        .video-item.auto-focus {
+            background: #EBF0FA;
+            border: 2px solid #1e3c72;
+            animation: focusBlink 1.5s ease;
+        }
+
+        @keyframes focusBlink {
+            0% { box-shadow: 0 0 0 0 rgba(30,60,114,0.3); }
+            50% { box-shadow: 0 0 0 8px rgba(30,60,114,0); }
+            100% { box-shadow: 0 0 0 0 rgba(30,60,114,0); }
+        }
+
+        .video-cover {
+            width: 50px; height: 50px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 18px;
+            flex-shrink: 0;
+        }
+
+        .video-item.locked-video .video-cover {
+            background: #E5E7EB;
+            color: #9CA3AF;
+        }
+
+        .video-info { flex: 1; }
+        .video-info h4 { font-size: 15px; color: #333; margin-bottom: 3px; font-weight: 600; }
+        .video-info p { font-size: 12px; color: #999; }
+
+        .video-action-btn {
+            padding: 6px 14px;
+            border-radius: 16px;
+            border: none;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            flex-shrink: 0;
+        }
+
+        .btn-learn { background: #1e3c72; color: white; }
+        .btn-done { background: #EBF0FA; color: #1e3c72; }
+        .btn-locked { background: #F3F4F6; color: #9CA3AF; }
+
+        /* 流星 */
+        .meteor {
+            position: absolute;
+            z-index: 50;
+            pointer-events: none;
+            opacity: 0;
+        }
+
+        .meteor-core {
+            width: 14px;
+            height: 14px;
+            background: radial-gradient(circle, #FFD700 0%, #FFA500 50%, transparent 100%);
+            border-radius: 50%;
+            box-shadow: 0 0 12px 4px rgba(255,215,0,0.6), 0 0 30px 8px rgba(255,165,0,0.3);
+        }
+
+        .meteor-tail {
+            position: absolute;
+            top: 50%;
+            right: 100%;
+            transform: translateY(-50%);
+            width: 60px;
+            height: 3px;
+            background: linear-gradient(to left, rgba(255,215,0,0.8), rgba(255,165,0,0.3), transparent);
+            border-radius: 2px;
+            filter: blur(1px);
+        }
+
+        /* 流星到达后的爆开光晕 */
+        .impact-ring {
+            position: absolute;
+            z-index: 6;
+            pointer-events: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(255,215,0,0.5) 0%, transparent 70%);
+            transform: translate(-50%, -50%) scale(0);
+            opacity: 0;
+        }
+
+        .impact-ring.burst {
+            animation: impactBurst 1s ease-out forwards;
+        }
+
+        @keyframes impactBurst {
+            0% { transform: translate(-50%, -50%) scale(0); opacity: 1; }
+            40% { transform: translate(-50%, -50%) scale(6); opacity: 0.6; }
+            100% { transform: translate(-50%, -50%) scale(8); opacity: 0; }
+        }
+
+        /* 节点初始隐藏，等流星到达后才显示 */
+        .node.wait-meteor {
+            opacity: 0 !important;
+            animation: none !important;
+        }
+
+        .node.meteor-landed {
+            opacity: 0;
+            animation: meteorReveal 0.6s ease forwards !important;
+        }
+
+        @keyframes meteorReveal {
+            0% { opacity: 0; transform: translate(-50%, -50%) scale(1.3); }
+            50% { opacity: 1; transform: translate(-50%, -50%) scale(0.95); }
+            100% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+        }
+
+        /* Toast */
+        .toast {
+            position: absolute;
+            top: 35%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0,0,0,0.75);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-size: 14px;
+            z-index: 999;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .toast.show { opacity: 1; }
+
+        .home-indicator {
+            position: absolute;
+            bottom: 8px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 120px;
+            height: 5px;
+            background: #000;
+            border-radius: 10px;
+            opacity: 0.1;
+            z-index: 25;
+        }
+    </style>
+</head>
+<body>
+<div class="phone-container">
+    <div class="phone-frame">
+        <div class="notch"></div>
+        <div class="status-bar">
+            <span id="time">09:41</span>
+            <div style="display: flex; gap: 5px; align-items: center;">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12.01 21.49L23.64 7c-.45-.34-4.93-4-11.64-4C5.28 3 .81 6.66.36 7l11.63 14.49.01.01.01-.01z" fill-opacity=".3"/></svg>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M15.67 4H14V2h-4v2H8.33C7.6 4 7 4.6 7 5.33v15.33C7 21.4 7.6 22 8.33 22h7.33c.74 0 1.34-.6 1.34-1.33V5.33C17 4.6 16.4 4 15.67 4z"/></svg>
+            </div>
+        </div>
+
+        <div class="page-header">
+            <div class="header-top">
+                <h1>培训进阶之路</h1>
+                <div class="progress-badge" id="progressBadge">阶段 2 / 4</div>
+            </div>
+            <div class="header-desc">完成每个阶段的学习和考核，逐步提升专业技能</div>
+        </div>
+
+        <div class="map-container" id="mapContainer">
+            <div class="map-canvas" id="mapCanvas">
+                <svg class="svg-path" id="svgPath" preserveAspectRatio="none"></svg>
+                <!-- 流星 -->
+                <div class="meteor" id="meteor">
+                    <div class="meteor-core"></div>
+                    <div class="meteor-tail"></div>
+                </div>
+                <!-- 撞击光晕 -->
+                <div class="impact-ring" id="impactRing"></div>
+                <!-- 装饰 -->
+                <div class="deco-dot" style="width:6px;height:6px;background:rgba(30,60,114,0.12);top:90px;left:55%;"></div>
+                <div class="deco-dot" style="width:4px;height:4px;background:rgba(255,215,0,0.25);top:200px;right:40px;"></div>
+                <div class="deco-dot" style="width:5px;height:5px;background:rgba(30,60,114,0.1);top:350px;left:30px;"></div>
+                <div class="deco-dot" style="width:7px;height:7px;background:rgba(42,82,152,0.08);bottom:200px;right:60px;"></div>
+                <div class="deco-dot" style="width:4px;height:4px;background:rgba(255,215,0,0.2);bottom:300px;left:50%;"></div>
+                <div class="deco-diamond" style="top:150px;left:45%;"></div>
+                <div class="deco-diamond" style="top:400px;right:50px;width:10px;height:10px;"></div>
+                <div class="deco-diamond" style="bottom:180px;left:35px;width:6px;height:6px;"></div>
+                <div class="deco-ring" style="width:40px;height:40px;top:130px;right:30px;"></div>
+                <div class="deco-ring" style="width:28px;height:28px;top:450px;left:25px;"></div>
+                <div class="deco-ring" style="width:35px;height:35px;bottom:150px;left:50%;"></div>
+            </div>
+        </div>
+
+        <div class="overlay" id="overlay" onclick="closeSheet()"></div>
+
+        <div class="bottom-sheet" id="bottomSheet">
+            <div class="sheet-handle"></div>
+            <div class="sheet-header">
+                <div>
+                    <h3 id="sheetTitle">阶段名称</h3>
+                    <div class="sheet-progress" id="sheetProgress">1/3 已完成</div>
+                </div>
+                <button class="close-btn" onclick="closeSheet()">×</button>
+            </div>
+            <div class="video-list" id="videoList"></div>
+        </div>
+
+        <div class="toast" id="toast"></div>
+        <div class="home-indicator"></div>
+    </div>
+</div>
+
+<script>
+(function() {
+    /* ========== 数据配置 ========== */
+    const STAGES = [
+        { name: '基础礼仪', status: 'completed', icon: 'completed', videos: [
+            { title: '家政服务基本礼仪', duration: '4分钟', status: 'done' },
+            { title: '客户沟通技巧', duration: '5分钟', status: 'done' },
+            { title: '阶段考核测试', duration: '不限时', status: 'done', isExam: true }
+        ]},
+        { name: '母婴护理', status: 'active', icon: 'active', videos: [
+            { title: '新生儿安抚技巧', duration: '5分钟', status: 'done' },
+            { title: '辅食添加指南', duration: '4分钟', status: 'learn' },
+            { title: '婴儿洗澡注意事项', duration: '3分钟', status: 'learn' },
+            { title: '阶段考核测试', duration: '不限时', status: 'locked', isExam: true }
+        ]},
+        { name: '高级收纳', status: 'locked', icon: 'locked', videos: [
+            { title: '衣柜收纳整理', duration: '5分钟', status: 'locked' },
+            { title: '厨房空间优化', duration: '4分钟', status: 'locked' },
+            { title: '阶段考核测试', duration: '不限时', status: 'locked', isExam: true }
+        ]},
+        { name: '营养膳食', status: 'locked', icon: 'locked', videos: [
+            { title: '月子餐搭配原则', duration: '5分钟', status: 'locked' },
+            { title: '产后营养调理', duration: '4分钟', status: 'locked' },
+            { title: '家常菜烹饪技巧', duration: '5分钟', status: 'locked' },
+            { title: '阶段考核测试', duration: '不限时', status: 'locked', isExam: true }
+        ]}
+    ];
+
+    /* 专业SVG图标（替代emoji） */
+    const NODE_ICONS = {
+        completed: '<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>',
+        active: '<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>',
+        locked: '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>'
+    };
+
+    /* ========== 布局计算 ========== */
+    const MAP_WIDTH = 351;
+    const NODE_SPACING_Y = 190;
+    const PADDING_TOP = 70;
+    const PADDING_BOTTOM = 100;
+    const CENTER_X = Math.round(MAP_WIDTH / 2);
+    const OFFSET_X = 90;
+    const LEFT_X = CENTER_X - OFFSET_X;
+    const RIGHT_X = CENTER_X + OFFSET_X;
+
+    function calcPositions(count) {
+        const positions = [];
+        const totalHeight = PADDING_TOP + (count - 1) * NODE_SPACING_Y + PADDING_BOTTOM;
+        for (let i = 0; i < count; i++) {
+            const y = totalHeight - PADDING_BOTTOM - i * NODE_SPACING_Y;
+            const x = (i % 2 === 0) ? LEFT_X : RIGHT_X;
+            positions.push({ x, y });
+        }
+        return { positions, totalHeight };
+    }
+
+    const { positions, totalHeight } = calcPositions(STAGES.length);
+    const mapCanvas = document.getElementById('mapCanvas');
+    mapCanvas.style.height = totalHeight + 'px';
+
+    /* ========== SVG路径 ========== */
+    const svgPath = document.getElementById('svgPath');
+    svgPath.setAttribute('viewBox', `0 0 ${MAP_WIDTH} ${totalHeight}`);
+    svgPath.style.height = totalHeight + 'px';
+
+    function buildPath(pts) {
+        if (pts.length < 2) return '';
+        let d = `M ${pts[0].x} ${pts[0].y}`;
+        for (let i = 0; i < pts.length - 1; i++) {
+            const curr = pts[i], next = pts[i + 1];
+            const midY = (curr.y + next.y) / 2;
+            d += ` C ${curr.x} ${midY}, ${next.x} ${midY}, ${next.x} ${next.y}`;
+        }
+        return d;
+    }
+
+    const fullPath = buildPath(positions);
+    const activeIdx = STAGES.findIndex(s => s.status === 'active');
+    const completedPositions = positions.slice(0, activeIdx + 1);
+    const completedPath = buildPath(completedPositions);
+
+    // 虚线底层
+    const dashLine = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+    dashLine.setAttribute('d', fullPath);
+    dashLine.setAttribute('fill', 'transparent');
+    dashLine.setAttribute('stroke', '#D6DEE8');
+    dashLine.setAttribute('stroke-width', '5');
+    dashLine.setAttribute('stroke-dasharray', '8 8');
+    dashLine.setAttribute('stroke-linecap', 'round');
+    svgPath.appendChild(dashLine);
+
+    // 实线上层
+    if (completedPositions.length >= 2) {
+        const solidLine = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        solidLine.setAttribute('d', completedPath);
+        solidLine.setAttribute('fill', 'transparent');
+        solidLine.setAttribute('stroke', '#1e3c72');
+        solidLine.setAttribute('stroke-width', '5');
+        solidLine.setAttribute('stroke-linecap', 'round');
+        svgPath.appendChild(solidLine);
+    }
+
+    /* ========== 渲染节点 ========== */
+    const progressBadge = document.getElementById('progressBadge');
+    const completedCount = STAGES.filter(s => s.status === 'completed').length;
+    progressBadge.textContent = `阶段 ${completedCount + 1} / ${STAGES.length}`;
+
+    STAGES.forEach((stage, index) => {
+        const pos = positions[index];
+        const node = document.createElement('div');
+        node.className = `node ${stage.status}`;
+        node.style.left = pos.x + 'px';
+        node.style.top = pos.y + 'px';
+
+        // active节点先隐藏，等流星到达后再显示
+        if (stage.status === 'active') {
+            node.classList.add('wait-meteor');
+        } else {
+            // 其他节点正常错开入场
+            node.style.animationDelay = (index * 0.2 + 0.3) + 's';
+        }
+
+        node.innerHTML = `
+            <div class="node-icon">${NODE_ICONS[stage.icon]}</div>
+            <div class="node-label">
+                <div class="node-title">阶段${index + 1}：${stage.name}</div>
+                <div class="node-sub">${stage.videos.length}个课程</div>
+            </div>
+        `;
+
+        node.addEventListener('click', () => {
+            if (stage.status === 'locked') {
+                showToast('请先完成前面的阶段哦');
+                return;
+            }
+            openSheet(stage, index);
+        });
+
+        mapCanvas.appendChild(node);
+    });
+
+    /* ========== 底部抽屉 ========== */
+    const bottomSheet = document.getElementById('bottomSheet');
+    const overlay = document.getElementById('overlay');
+    const sheetTitle = document.getElementById('sheetTitle');
+    const sheetProgress = document.getElementById('sheetProgress');
+    const videoList = document.getElementById('videoList');
+
+    function openSheet(stage, index, autoFocusFirst) {
+        sheetTitle.textContent = `阶段${index + 1}：${stage.name}`;
+        const doneCount = stage.videos.filter(v => v.status === 'done').length;
+        sheetProgress.textContent = `${doneCount}/${stage.videos.length} 已完成`;
+
+        // 找到第一个待学习的视频索引
+        const firstLearnIdx = stage.videos.findIndex(v => v.status === 'learn');
+
+        videoList.innerHTML = stage.videos.map((v, vi) => {
+            const isLocked = v.status === 'locked';
+            const isExam = v.isExam === true;
+            const isFocus = autoFocusFirst && vi === firstLearnIdx;
+            let btnHtml = '';
+            if (v.status === 'done') btnHtml = '<button class="video-action-btn btn-done">已完成</button>';
+            else if (v.status === 'learn') btnHtml = '<button class="video-action-btn btn-learn">去学习</button>';
+            else btnHtml = '<button class="video-action-btn btn-locked">未解锁</button>';
+
+            /* 考核项用笔记图标，视频项用播放图标 */
+            const coverIcon = isLocked ? '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>'
+                : isExam ? '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>'
+                : '<svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>';
+
+            return `
+                <div class="video-item ${isLocked ? 'locked-video' : ''} ${isFocus ? 'auto-focus' : ''}">
+                    <div class="video-cover">${coverIcon}</div>
+                    <div class="video-info">
+                        <h4>${v.title}</h4>
+                        <p>${v.duration}</p>
+                    </div>
+                    ${btnHtml}
+                </div>
+            `;
+        }).join('');
+
+        bottomSheet.classList.add('open');
+        overlay.classList.add('active-overlay');
+
+        // 滚动到高亮项
+        if (autoFocusFirst && firstLearnIdx >= 0) {
+            setTimeout(() => {
+                const focusEl = videoList.querySelector('.auto-focus');
+                if (focusEl) focusEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }, 400);
+        }
+    }
+
+    window.closeSheet = function() {
+        bottomSheet.classList.remove('open');
+        overlay.classList.remove('active-overlay');
+    };
+
+    /* ========== 流星飞入动画 ========== */
+    if (activeIdx >= 0) {
+        const meteor = document.getElementById('meteor');
+        const impactRing = document.getElementById('impactRing');
+        const mapContainer = document.getElementById('mapContainer');
+        const activePos = positions[activeIdx];
+        const activeNode = mapCanvas.querySelectorAll('.node')[activeIdx];
+
+        // 流星飞行参数
+        const METEOR_DURATION = 1800;   // 飞行时长 ms
+        const SCROLL_DELAY = 800;       // 先等其他节点入场
+        const METEOR_START_DELAY = 1200; // 流星发射延迟
+
+        // 第一步：滚动到 active 节点附近
+        setTimeout(() => {
+            mapContainer.scrollTo({ top: activePos.y - 280, behavior: 'smooth' });
+        }, SCROLL_DELAY);
+
+        // 第二步：发射流星
+        setTimeout(() => {
+            // 起点：地图画布顶部中央
+            const startX = MAP_WIDTH / 2;
+            const startY = 0;
+            // 终点：active 节点中心
+            const endX = activePos.x;
+            const endY = activePos.y;
+
+            // 初始化流星位置
+            meteor.style.left = startX + 'px';
+            meteor.style.top = startY + 'px';
+            meteor.style.opacity = '1';
+
+            let startTime = null;
+
+            function animateMeteor(timestamp) {
+                if (!startTime) startTime = timestamp;
+                const elapsed = timestamp - startTime;
+                const progress = Math.min(elapsed / METEOR_DURATION, 1);
+
+                // 缓动函数：先慢后快再慢（easeInOutCubic）
+                const ease = progress < 0.5
+                    ? 4 * progress * progress * progress
+                    : 1 - Math.pow(-2 * progress + 2, 3) / 2;
+
+                const curX = startX + (endX - startX) * ease;
+                const curY = startY + (endY - startY) * ease;
+
+                meteor.style.left = curX + 'px';
+                meteor.style.top = curY + 'px';
+
+                // 计算尾巴角度，让尾巴朝运动反方向
+                const dx = endX - startX;
+                const dy = endY - startY;
+                const angle = Math.atan2(dy, dx) * (180 / Math.PI);
+                meteor.style.transform = `translate(-50%, -50%) rotate(${angle}deg)`;
+
+                // 飞行中逐渐增大光晕
+                const scale = 0.8 + progress * 0.5;
+                meteor.querySelector('.meteor-core').style.transform = `scale(${scale})`;
+
+                if (progress < 1) {
+                    requestAnimationFrame(animateMeteor);
+                } else {
+                    // 到达目标 — 隐藏流星
+                    meteor.style.opacity = '0';
+
+                    // 触发撞击光晕
+                    impactRing.style.left = endX + 'px';
+                    impactRing.style.top = endY + 'px';
+                    impactRing.classList.add('burst');
+
+                    // 显示 active 节点（从流星变出来的效果）
+                    activeNode.classList.remove('wait-meteor');
+                    activeNode.classList.add('meteor-landed');
+
+                    // 撞击动画结束后打开抽屉
+                    setTimeout(() => {
+                        openSheet(STAGES[activeIdx], activeIdx, true);
+                    }, 900);
+                }
+            }
+
+            requestAnimationFrame(animateMeteor);
+        }, METEOR_START_DELAY);
+    }
+
+    /* ========== Toast ========== */
+    function showToast(msg) {
+        const toast = document.getElementById('toast');
+        toast.textContent = msg;
+        toast.classList.add('show');
+        setTimeout(() => toast.classList.remove('show'), 1500);
+    }
+
+    /* ========== 时间 ========== */
+    function updateTime() {
+        const now = new Date();
+        const h = String(now.getHours()).padStart(2, '0');
+        const m = String(now.getMinutes()).padStart(2, '0');
+        document.getElementById('time').textContent = h + ':' + m;
+    }
+    setInterval(updateTime, 1000);
+    updateTime();
+})();
+</script>
+</body>
+</html>
