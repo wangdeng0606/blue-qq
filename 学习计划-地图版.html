@@ -517,7 +517,10 @@
 
         <div class="page-header">
             <div class="header-top">
-                <h1>培训进阶之路</h1>
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <svg onclick="history.back()" style="cursor:pointer;flex-shrink:0;" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+                    <h1>培训进阶之路</h1>
+                </div>
                 <div class="progress-badge" id="progressBadge">阶段 2 / 4</div>
             </div>
             <div class="header-desc">完成每个阶段的学习和考核，逐步提升专业技能</div>
@@ -578,9 +581,9 @@
         ]},
         { name: '母婴护理', status: 'active', icon: 'active', videos: [
             { title: '新生儿安抚技巧', duration: '5分钟', status: 'done' },
-            { title: '辅食添加指南', duration: '4分钟', status: 'learn' },
-            { title: '婴儿洗澡注意事项', duration: '3分钟', status: 'learn' },
-            { title: '阶段考核测试', duration: '不限时', status: 'locked', isExam: true }
+            { title: '辅食添加指南', duration: '4分钟', status: 'done' },
+            { title: '婴儿洗澡注意事项', duration: '3分钟', status: 'done' },
+            { title: '阶段考核测试', duration: '不限时', status: 'learn', isExam: true }
         ]},
         { name: '高级收纳', status: 'locked', icon: 'locked', videos: [
             { title: '衣柜收纳整理', duration: '5分钟', status: 'locked' },
@@ -720,8 +723,9 @@
         const doneCount = stage.videos.filter(v => v.status === 'done').length;
         sheetProgress.textContent = `${doneCount}/${stage.videos.length} 已完成`;
 
-        // 找到第一个待学习的视频索引
-        const firstLearnIdx = stage.videos.findIndex(v => v.status === 'learn');
+        // 找到考核项索引（优先聚焦考核，否则第一个待学习）
+        const examLearnIdx = stage.videos.findIndex(v => v.status === 'learn' && v.isExam);
+        const firstLearnIdx = examLearnIdx >= 0 ? examLearnIdx : stage.videos.findIndex(v => v.status === 'learn');
 
         videoList.innerHTML = stage.videos.map((v, vi) => {
             const isLocked = v.status === 'locked';
@@ -729,6 +733,7 @@
             const isFocus = autoFocusFirst && vi === firstLearnIdx;
             let btnHtml = '';
             if (v.status === 'done') btnHtml = '<button class="video-action-btn btn-done">已完成</button>';
+            else if (v.status === 'learn' && isExam) btnHtml = '<button class="video-action-btn btn-learn" onclick="location.href=\'考核.html\'">去考核</button>';
             else if (v.status === 'learn') btnHtml = '<button class="video-action-btn btn-learn">去学习</button>';
             else btnHtml = '<button class="video-action-btn btn-locked">未解锁</button>';
 
