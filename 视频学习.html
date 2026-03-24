@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>视频学习</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: #E8ECF4;
+            font-family: -apple-system, "SF Pro Display", "PingFang SC", "Noto Sans SC", sans-serif;
+        }
+
+        .phone-container {
+            position: relative;
+            width: 375px;
+            height: 812px;
+            background: #000;
+            border-radius: 50px;
+            padding: 12px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35), 0 40px 100px rgba(0, 0, 0, 0.2);
+        }
+
+        .phone-frame {
+            width: 100%;
+            height: 100%;
+            background: #0a0a0a;
+            border-radius: 40px;
+            overflow: hidden;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .notch {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 160px;
+            height: 30px;
+            background: #000;
+            border-radius: 0 0 18px 18px;
+            z-index: 100;
+        }
+
+        /* 状态栏 */
+        .status-bar {
+            height: 44px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            padding: 0 24px 8px;
+            font-size: 14px;
+            font-weight: 600;
+            color: white;
+            z-index: 99;
+            background: #0a0a0a;
+        }
+
+        /* ===== 视频播放器区域（竖屏全屏） ===== */
+        .video-player {
+            position: relative;
+            width: 100%;
+            flex: 1;
+            background: #000;
+            overflow: hidden;
+        }
+
+        /* 模拟视频画面 */
+        .video-bg {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* 视频内容示意图 */
+        .video-scene {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .scene-illustration {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* 视频画面内容 */
+        .video-content-mock {
+            position: absolute;
+            inset: 0;
+            background: 
+                radial-gradient(ellipse at 30% 35%, rgba(26,70,199,0.25) 0%, transparent 50%),
+                radial-gradient(ellipse at 70% 55%, rgba(59,124,245,0.2) 0%, transparent 50%),
+                linear-gradient(180deg, #0c1929 0%, #162d50 40%, #1a3a5c 60%, #0c1929 100%);
+        }
+
+        .video-person {
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 120px;
+            opacity: 0.6;
+        }
+
+        /* 字幕条 */
+        .subtitle-bar {
+            position: absolute;
+            bottom: 80px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0,0,0,0.5);
+            color: white;
+            font-size: 13px;
+            padding: 7px 18px;
+            border-radius: 20px;
+            white-space: nowrap;
+            pointer-events: none;
+            backdrop-filter: blur(4px);
+        }
+
+        /* 顶部控制栏 */
+        .player-top-bar {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            padding: 10px 14px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: linear-gradient(to bottom, rgba(0,0,0,0.6), transparent);
+            z-index: 10;
+        }
+
+        .back-btn {
+            width: 32px;
+            height: 32px;
+            background: rgba(255,255,255,0.15);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            backdrop-filter: blur(4px);
+        }
+
+        .player-title {
+            color: white;
+            font-size: 13px;
+            font-weight: 600;
+            max-width: 180px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .more-btn {
+            width: 32px;
+            height: 32px;
+            background: rgba(255,255,255,0.15);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            backdrop-filter: blur(4px);
+        }
+
+        /* 中央播放/暂停按钮 */
+        .center-play-btn {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 56px;
+            height: 56px;
+            background: rgba(255,255,255,0.9);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+            transition: transform 0.2s, opacity 0.3s;
+            z-index: 10;
+        }
+
+        .center-play-btn:active { transform: translate(-50%, -50%) scale(0.9); }
+        .center-play-btn.playing { opacity: 0; }
+        .center-play-btn.playing:hover { opacity: 0.8; }
+
+        .play-icon { fill: #1a46c7; margin-left: 3px; }
+        .pause-icon { fill: #1a46c7; display: none; }
+
+        /* 底部控制栏 */
+        .player-controls {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 14px 18px 26px;
+            background: linear-gradient(to top, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.3) 60%, transparent 100%);
+            z-index: 10;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        /* 进度条（只展示，不可拖拽） */
+        .progress-bar-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: rgba(255,255,255,0.2);
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            background: white;
+            width: 0%;
+            transition: width 0.1s linear;
+        }
+
+        .time-label {
+            font-size: 13px;
+            color: rgba(255,255,255,0.85);
+            font-weight: 500;
+        }
+
+        .ctrl-btn {
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: white;
+        }
+
+
+        /* 视频标题（底部叠加） */
+        .video-bottom-info {
+            position: absolute;
+            bottom: 70px;
+            left: 18px;
+            right: 70px;
+            z-index: 10;
+        }
+
+        .video-bottom-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: white;
+            text-shadow: 0 1px 4px rgba(0,0,0,0.5);
+        }
+
+        /* 播放动画 — 波形 */
+        .playing-waves {
+            position: absolute;
+            bottom: 80px;
+            left: 18px;
+            display: flex;
+            align-items: flex-end;
+            gap: 3px;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .playing-waves.show { opacity: 1; }
+
+        .wave-bar {
+            width: 3px;
+            background: white;
+            border-radius: 2px;
+            animation: waveAnim 0.8s ease-in-out infinite alternate;
+        }
+
+        .wave-bar:nth-child(1) { height: 6px; animation-delay: 0s; }
+        .wave-bar:nth-child(2) { height: 12px; animation-delay: 0.1s; }
+        .wave-bar:nth-child(3) { height: 8px; animation-delay: 0.2s; }
+        .wave-bar:nth-child(4) { height: 14px; animation-delay: 0.15s; }
+        .wave-bar:nth-child(5) { height: 6px; animation-delay: 0.05s; }
+
+        @keyframes waveAnim {
+            from { transform: scaleY(1); }
+            to { transform: scaleY(0.3); }
+        }
+
+        /* 完成弹窗 */
+        .complete-modal {
+            position: absolute;
+            inset: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 200;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(4px);
+        }
+
+        .complete-modal.show { display: flex; }
+
+        .complete-card {
+            background: white;
+            border-radius: 28px;
+            padding: 30px 24px;
+            width: 290px;
+            text-align: center;
+        }
+
+        .complete-icon {
+            width: 72px;
+            height: 72px;
+            background: linear-gradient(135deg, #1a46c7, #3b7cf5);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 16px;
+        }
+
+        .complete-card h3 { font-size: 20px; font-weight: 700; color: #1a1a1a; margin-bottom: 8px; }
+        .complete-card p { font-size: 14px; color: #888; margin-bottom: 24px; line-height: 1.6; }
+
+        .complete-btns { display: flex; gap: 10px; }
+
+        .complete-btn {
+            flex: 1;
+            padding: 13px;
+            border: none;
+            border-radius: 12px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .btn-secondary { background: #F3F4F6; color: #666; }
+        .btn-primary { background: linear-gradient(135deg, #1a46c7, #3b7cf5); color: white; box-shadow: 0 4px 14px rgba(26,70,199,0.3); }
+
+
+        .home-indicator {
+            position: absolute;
+            bottom: 8px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 120px;
+            height: 5px;
+            background: #000;
+            border-radius: 10px;
+            opacity: 0.15;
+            z-index: 300;
+        }
+    </style>
+</head>
+<body>
+
+<div class="phone-container">
+    <div class="phone-frame">
+        <div class="notch"></div>
+
+        <!-- 状态栏 -->
+        <div class="status-bar">
+            <span id="time">09:41</span>
+            <div style="display: flex; gap: 5px; align-items: center;">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="white"><path d="M12.01 21.49L23.64 7c-.45-.34-4.93-4-11.64-4C5.28 3 .81 6.66.36 7l11.63 14.49.01.01.01-.01z" fill-opacity=".5"/></svg>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="white"><path d="M15.67 4H14V2h-4v2H8.33C7.6 4 7 4.6 7 5.33v15.33C7 21.4 7.6 22 8.33 22h7.33c.74 0 1.34-.6 1.34-1.33V5.33C17 4.6 16.4 4 15.67 4z"/></svg>
+            </div>
+        </div>
+
+        <!-- 视频播放器 -->
+        <div class="video-player" id="videoPlayer">
+            <!-- 模拟视频画面 -->
+            <div class="video-content-mock"></div>
+
+            <!-- SVG插图：培训场景 -->
+            <svg style="position:absolute;inset:0;width:100%;height:100%;opacity:0.3" viewBox="0 0 351 700" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+                <rect width="351" height="700" fill="url(#bg_grad)"/>
+                <!-- 人物剪影（居中偏上） -->
+                <ellipse cx="175" cy="260" rx="35" ry="45" fill="#3b7cf5" opacity="0.8"/>
+                <ellipse cx="175" cy="220" rx="22" ry="22" fill="#4a7fc4" opacity="0.8"/>
+                <!-- 桌子 -->
+                <rect x="60" y="310" width="230" height="8" rx="4" fill="#3a6fa8" opacity="0.6"/>
+                <rect x="80" y="318" width="6" height="50" fill="#3a6fa8" opacity="0.4"/>
+                <rect x="264" y="318" width="6" height="50" fill="#3a6fa8" opacity="0.4"/>
+                <!-- 婴儿示意 -->
+                <ellipse cx="175" cy="290" rx="18" ry="12" fill="#4a7fc4" opacity="0.5"/>
+                <!-- 装饰粒子 -->
+                <circle cx="50" cy="120" r="4" fill="#FFD700" opacity="0.35"/>
+                <circle cx="300" cy="180" r="3" fill="#FFD700" opacity="0.25"/>
+                <circle cx="310" cy="450" r="5" fill="#4a9de0" opacity="0.2"/>
+                <circle cx="40" cy="500" r="4" fill="#4a9de0" opacity="0.2"/>
+                <circle cx="280" cy="600" r="3" fill="#FFD700" opacity="0.15"/>
+                <circle cx="70" cy="350" r="2" fill="white" opacity="0.15"/>
+                <defs>
+                    <linearGradient id="bg_grad" x1="0" y1="0" x2="175" y2="700" gradientUnits="userSpaceOnUse">
+                        <stop offset="0%" stop-color="#0d1b2a"/>
+                        <stop offset="50%" stop-color="#1b3a5c"/>
+                        <stop offset="100%" stop-color="#0d1b2a"/>
+                    </linearGradient>
+                </defs>
+            </svg>
+
+            <!-- 字幕 -->
+            <div class="subtitle-bar" id="subtitleBar">新生儿安抚时应保持环境安静，动作轻柔...</div>
+
+            <!-- 顶部控制栏 -->
+            <div class="player-top-bar">
+                <div class="back-btn" onclick="location.href='学习计划-地图版.html'">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+                </div>
+                <div class="player-title" id="playerTitle">婴儿洗澡注意事项</div>
+                <div class="more-btn">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="white"><circle cx="12" cy="5" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="12" cy="19" r="1.5"/></svg>
+                </div>
+            </div>
+
+            <!-- 中央播放按钮 -->
+            <div class="center-play-btn" id="centerPlayBtn" onclick="togglePlay()">
+                <svg class="play-icon" id="playIcon" width="22" height="22" viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                <svg class="pause-icon" id="pauseIcon" width="22" height="22" viewBox="0 0 24 24" fill="#1a46c7"><rect x="6" y="4" width="4" height="16" rx="1"/><rect x="14" y="4" width="4" height="16" rx="1"/></svg>
+            </div>
+
+            <!-- 播放波形 -->
+            <div class="playing-waves" id="playingWaves">
+                <div class="wave-bar"></div>
+                <div class="wave-bar"></div>
+                <div class="wave-bar"></div>
+                <div class="wave-bar"></div>
+                <div class="wave-bar"></div>
+            </div>
+
+            <!-- 底部控制栏 -->
+            <div class="player-controls">
+                <div class="progress-bar-bg"><div class="progress-bar-fill" id="progressFill"></div></div>
+                <span class="time-label" id="timeLabel">00:00 / 03:00</span>
+                <div class="ctrl-btn">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/><line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/></svg>
+                </div>
+            </div>
+
+            <!-- 视频标题（叠加在画面上） -->
+            <div class="video-bottom-info">
+                <div class="video-bottom-title" id="videoTitle">婴儿洗澡注意事项</div>
+            </div>
+            </div>
+
+        <!-- 完成弹窗 -->
+        <div class="complete-modal" id="completeModal">
+            <div class="complete-card">
+                <div class="complete-icon">
+                    <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                </div>
+                <h3>视频学习完成！</h3>
+                <p>你已完成本课视频学习<br>去完成本阶段的考核测试吧</p>
+                <div class="complete-btns">
+                    <button class="complete-btn btn-secondary" onclick="closeModal()">再看一遍</button>
+                    <button class="complete-btn btn-primary" onclick="location.href='考核.html'">去考核</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="home-indicator"></div>
+    </div>
+</div>
+
+<script>
+(function () {
+    /* ========== 读取URL参数 ========== */
+    const params = new URLSearchParams(location.search);
+    const urlTitle = params.get('title');
+    const urlDuration = params.get('duration');
+
+    /* 填写标题 */
+    const videoTitle = urlTitle || '婴儿洗澡注意事项';
+    document.getElementById('videoTitle').textContent = videoTitle;
+    document.getElementById('playerTitle').textContent = videoTitle;
+
+    /* 字幕池 */
+    const SUBTITLES = [
+        '新生儿安抚时应保持环境安静，动作轻柔...',
+        '水温控制在37-38°C，用肘部测试最为准确',
+        '洗澡时间不宜超过10分钟，避免着凉',
+        '托住宝宝头部和颈部，保持安全姿势',
+        '洗完后用柔软毛巾轻轻擦干，避免用力搓揉',
+        '脐带未脱落前避免盆浴，用擦浴方式',
+    ];
+    let subtitleIdx = 0;
+
+    /* ========== 播放状态 ========== */
+    let isPlaying = false;
+    let totalSeconds = 180;
+    let currentSeconds = 0;
+    let progressTimer = null;
+
+    const centerPlayBtn = document.getElementById('centerPlayBtn');
+    const playIcon = document.getElementById('playIcon');
+    const pauseIcon = document.getElementById('pauseIcon');
+    const progressFill = document.getElementById('progressFill');
+    const timeLabel = document.getElementById('timeLabel');
+    const playingWaves = document.getElementById('playingWaves');
+
+    function formatTime(s) {
+        const m = Math.floor(s / 60);
+        const sec = s % 60;
+        return String(m).padStart(2, '0') + ':' + String(sec).padStart(2, '0');
+    }
+
+    function updateProgressUI() {
+        const pct = (currentSeconds / totalSeconds) * 100;
+        progressFill.style.width = pct + '%';
+        timeLabel.textContent = formatTime(currentSeconds) + ' / ' + formatTime(totalSeconds);
+    }
+
+    window.togglePlay = function () {
+        isPlaying = !isPlaying;
+        if (isPlaying) {
+            centerPlayBtn.classList.add('playing');
+            playIcon.style.display = 'none';
+            pauseIcon.style.display = 'block';
+            playingWaves.classList.add('show');
+            progressTimer = setInterval(() => {
+                currentSeconds += 4;
+                if (currentSeconds > totalSeconds) currentSeconds = totalSeconds;
+                updateProgressUI();
+                if (Math.floor(currentSeconds / 30) !== Math.floor((currentSeconds - 4) / 30)) {
+                    subtitleIdx = (subtitleIdx + 1) % SUBTITLES.length;
+                    document.getElementById('subtitleBar').textContent = SUBTITLES[subtitleIdx];
+                }
+                if (currentSeconds >= totalSeconds) {
+                    clearInterval(progressTimer);
+                    isPlaying = false;
+                    onVideoEnd();
+                }
+            }, 100);
+        } else {
+            clearInterval(progressTimer);
+            centerPlayBtn.classList.remove('playing');
+            playIcon.style.display = 'block';
+            pauseIcon.style.display = 'none';
+            playingWaves.classList.remove('show');
+        }
+    };
+
+    function onVideoEnd() {
+        centerPlayBtn.classList.remove('playing');
+        playIcon.style.display = 'block';
+        pauseIcon.style.display = 'none';
+        playingWaves.classList.remove('show');
+        document.getElementById('completeModal').classList.add('show');
+    }
+
+    window.closeModal = function () {
+        document.getElementById('completeModal').classList.remove('show');
+        currentSeconds = 0;
+        updateProgressUI();
+    };
+
+    /* 初始进度 */
+    updateProgressUI();
+
+    /* 自动播放 */
+    window.addEventListener('load', function () {
+        setTimeout(togglePlay, 900);
+    });
+
+    /* 时钟 */
+    function updateTime() {
+        const now = new Date();
+        document.getElementById('time').textContent =
+            String(now.getHours()).padStart(2, '0') + ':' + String(now.getMinutes()).padStart(2, '0');
+    }
+    setInterval(updateTime, 1000);
+    updateTime();
+})();
+</script>
+
+</body>
+</html>

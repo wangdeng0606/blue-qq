@@ -12,8 +12,8 @@
             justify-content: center;
             align-items: center;
             min-height: 100vh;
-            background: #e8eaf0;
-            font-family: -apple-system, "SF Pro Text", "PingFang SC", sans-serif;
+            background: #E8ECF4;
+            font-family: -apple-system, "SF Pro Display", "PingFang SC", "Noto Sans SC", sans-serif;
         }
 
         /* 手机容器 */
@@ -24,7 +24,7 @@
             background: #000;
             border-radius: 50px;
             padding: 12px;
-            box-shadow: 0 40px 100px rgba(0, 0, 0, 0.8);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35), 0 40px 100px rgba(0, 0, 0, 0.2);
         }
 
         .phone-frame {
@@ -79,19 +79,19 @@
             align-items: center;
             background: #F4F7FA;
         }
-        .app-title { font-size: 22px; font-weight: 800; color: #1e3c72; letter-spacing: 0.5px; }
+        .app-title { font-size: 22px; font-weight: 800; color: #1a46c7; letter-spacing: 0.3px; }
 
         /* 顶部Banner - 专业感升级 */
         .top-banner {
             margin: 10px 15px;
             height: 160px;
-            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
-            border-radius: 20px;
+            background: linear-gradient(135deg, #1a46c7 0%, #3b7cf5 60%, #60a5fa 100%);
+            border-radius: 22px;
             position: relative;
             overflow: hidden;
             color: white;
-            padding: 20px;
-            box-shadow: 0 10px 20px rgba(30, 60, 114, 0.2);
+            padding: 22px;
+            box-shadow: 0 8px 24px rgba(26, 70, 199, 0.25), 0 2px 6px rgba(26, 70, 199, 0.1);
         }
 
         .banner-content h2 { font-size: 24px; margin-bottom: 10px; font-weight: 600; }
@@ -119,7 +119,7 @@
             padding: 24px;
             background: white;
             border-radius: 28px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.04);
+            box-shadow: 0 4px 16px rgba(0,0,0,0.05), 0 1px 3px rgba(0,0,0,0.03);
             position: relative;
             overflow: hidden;
             cursor: pointer;
@@ -146,7 +146,7 @@
 
         .v1-info h4 {
             font-size: 20px;
-            color: #1e3c72;
+            color: #1a46c7;
             margin-bottom: 6px;
         }
 
@@ -179,7 +179,7 @@
 
         .v1-circle-fill {
             fill: none;
-            stroke: #fbbf24;
+            stroke: #f59e0b;
             stroke-width: 5;
             stroke-linecap: round;
             stroke-dasharray: 100;
@@ -210,7 +210,7 @@
 
         .v1-next-tag {
             background: #EBF5FF;
-            color: #1e3c72;
+            color: #1a46c7;
             font-size: 11px;
             padding: 4px 10px;
             border-radius: 6px;
@@ -218,7 +218,7 @@
         }
 
         .v1-action-text {
-            color: #1e3c72;
+            color: #1a46c7;
             font-size: 13px;
             font-weight: 600;
         }
@@ -229,7 +229,7 @@
             background: white;
             border-radius: 24px;
             padding: 20px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.04);
+            box-shadow: 0 4px 16px rgba(0,0,0,0.05), 0 1px 3px rgba(0,0,0,0.03);
         }
         .section-title {
             display: flex;
@@ -270,7 +270,7 @@
             bottom: 0;
             left: 50%;
             transform: translateX(-50%) translateY(50%);
-            background: #2a5298;
+            background: #3b7cf5;
             color: white;
             font-size: 11px;
             padding: 3px 10px;
@@ -280,7 +280,7 @@
         }
 
         .name { font-size: 15px; font-weight: 600; color: #333; margin-top: 12px; display: block; }
-        .score { font-size: 13px; color: #2a5298; font-weight: 700; }
+        .score { font-size: 13px; color: #3b7cf5; font-weight: 700; }
 
         /* 悬浮AI企鹅 - 磨砂专业感 */
         .ai-float {
@@ -302,14 +302,14 @@
         .ai-icon-circle {
             width: 40px;
             height: 40px;
-            background: #1e3c72;
+            background: #1a46c7;
             border-radius: 50%;
             display: flex;
             justify-content: center;
             align-items: center;
             overflow: hidden;
         }
-        .ai-text div:first-child { font-size: 14px; font-weight: 700; color: #1e3c72; }
+        .ai-text div:first-child { font-size: 14px; font-weight: 700; color: #1a46c7; }
         .ai-text div:last-child { font-size: 11px; color: #666; }
 
         /* 底部导航 - 5个tab */
@@ -323,10 +323,11 @@
             justify-content: space-around;
             align-items: flex-start;
             padding-top: 10px;
-            border-top: 1px solid #eee;
+            border-top: 1px solid #f0f0f0;
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.03);
         }
         .tab-item { display: flex; flex-direction: column; align-items: center; gap: 3px; color: #999; cursor: pointer; min-width: 48px; }
-        .tab-item.active { color: #1e3c72; }
+        .tab-item.active { color: #1a46c7; }
         .tab-item svg { width: 22px; height: 22px; }
         .tab-item span { font-size: 10px; font-weight: 500; }
         
@@ -337,13 +338,13 @@
         .center-inner {
             width: 50px;
             height: 50px;
-            background: #1e3c72;
+            background: linear-gradient(135deg, #1a46c7, #3b7cf5);
             border-radius: 16px;
             display: flex;
             justify-content: center;
             align-items: center;
             color: white;
-            box-shadow: 0 8px 20px rgba(30,60,114,0.3);
+            box-shadow: 0 6px 16px rgba(26,70,199,0.35);
             transform: rotate(45deg);
         }
         .center-inner svg { transform: rotate(-45deg); }
@@ -360,84 +361,6 @@
             opacity: 0.1;
         }
 
-        /* 新手引导遮罩 */
-        .guide-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.85);
-            z-index: 9999;
-            display: none;
-        }
-
-        .guide-overlay.active {
-            display: block;
-        }
-
-        .guide-spotlight {
-            position: absolute;
-            border: 3px solid #FFD700;
-            border-radius: 20px;
-            box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.85);
-            transition: all 0.3s ease;
-        }
-
-        .guide-tip {
-            position: absolute;
-            background: white;
-            padding: 20px;
-            border-radius: 16px;
-            max-width: 280px;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
-        }
-
-        .guide-tip h3 {
-            font-size: 18px;
-            color: #1e3c72;
-            margin-bottom: 10px;
-            font-weight: 700;
-        }
-
-        .guide-tip p {
-            font-size: 15px;
-            color: #666;
-            line-height: 1.6;
-            margin-bottom: 15px;
-        }
-
-        .guide-buttons {
-            display: flex;
-            gap: 10px;
-        }
-
-        .guide-btn {
-            flex: 1;
-            padding: 12px;
-            border: none;
-            border-radius: 8px;
-            font-size: 15px;
-            font-weight: 600;
-            cursor: pointer;
-        }
-
-        .guide-btn-skip {
-            background: #f0f0f0;
-            color: #666;
-        }
-
-        .guide-btn-next {
-            background: #1e3c72;
-            color: white;
-        }
-
-        .guide-progress {
-            text-align: center;
-            margin-top: 10px;
-            font-size: 13px;
-            color: #999;
-        }
     </style>
 </head>
 <body>
@@ -587,12 +510,6 @@
     </div>
 </div>
 
-<!-- 新手引导遮罩 -->
-<div class="guide-overlay" id="guideOverlay">
-    <div class="guide-spotlight" id="guideSpotlight"></div>
-    <div class="guide-tip" id="guideTip"></div>
-</div>
-
 <script>
     function updateTime() {
         const now = new Date();
@@ -603,91 +520,11 @@
     setInterval(updateTime, 1000);
     updateTime();
 
-    // 新手引导功能
-    const guideSteps = [
-        {
-            element: '.plan-card-v1',
-            title: '学习计划',
-            description: '点击进入你的专属学习路线，按阶段完成视频学习和考核'
-        },
-        {
-            element: '.ranking-card',
-            title: '积分排行榜',
-            description: '查看积分排名，和其他阿姨一起比拼学习成果'
-        }
-    ];
-
-    let currentStep = 0;
-    const overlay = document.getElementById('guideOverlay');
-    const spotlight = document.getElementById('guideSpotlight');
-    const tip = document.getElementById('guideTip');
-
-    function showGuide() {
-        // 检查是否已经看过引导
-        if (localStorage.getItem('guideCompleted')) {
-            return;
-        }
-
-        overlay.classList.add('active');
-        showStep(0);
-    }
-
-    function showStep(stepIndex) {
-        if (stepIndex >= guideSteps.length) {
-            endGuide();
-            return;
-        }
-
-        currentStep = stepIndex;
-        const step = guideSteps[stepIndex];
-        const element = document.querySelector(step.element);
-        
-        if (!element) {
-            endGuide();
-            return;
-        }
-
-        const rect = element.getBoundingClientRect();
-        
-        // 设置聚光灯位置
-        spotlight.style.left = (rect.left - 10) + 'px';
-        spotlight.style.top = (rect.top - 10) + 'px';
-        spotlight.style.width = (rect.width + 20) + 'px';
-        spotlight.style.height = (rect.height + 20) + 'px';
-
-        // 设置提示框位置和内容
-        tip.innerHTML = `
-            <h3>${step.title}</h3>
-            <p>${step.description}</p>
-            <div class="guide-buttons">
-                <button class="guide-btn guide-btn-skip" onclick="skipGuide()">跳过</button>
-                <button class="guide-btn guide-btn-next" onclick="nextStep()">${stepIndex === guideSteps.length - 1 ? '完成' : '下一步'}</button>
-            </div>
-            <div class="guide-progress">${stepIndex + 1} / ${guideSteps.length}</div>
-        `;
-
-        // 计算提示框位置（显示在元素下方）
-        tip.style.left = '50%';
-        tip.style.transform = 'translateX(-50%)';
-        tip.style.top = (rect.bottom + 20) + 'px';
-    }
-
-    function nextStep() {
-        showStep(currentStep + 1);
-    }
-
-    function skipGuide() {
-        endGuide();
-    }
-
-    function endGuide() {
-        overlay.classList.remove('active');
-        localStorage.setItem('guideCompleted', 'true');
-    }
-
-    // 页面加载完成后延迟1秒显示引导
     window.addEventListener('load', function() {
-        setTimeout(showGuide, 1000);
+        if (!sessionStorage.getItem('hasVisitedHome')) {
+            sessionStorage.setItem('hasVisitedHome', '1');
+            location.href = '学习计划-地图版.html';
+        }
     });
 </script>
 

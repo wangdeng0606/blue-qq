@@ -12,8 +12,8 @@
             justify-content: center;
             align-items: center;
             min-height: 100vh;
-            background: #e8eaf0;
-            font-family: -apple-system, "SF Pro Text", "PingFang SC", sans-serif;
+            background: #E8ECF4;
+            font-family: -apple-system, "SF Pro Display", "PingFang SC", "Noto Sans SC", sans-serif;
         }
 
         /* 手机容器 — 与其他页面统一 */
@@ -24,7 +24,7 @@
             background: #000;
             border-radius: 50px;
             padding: 12px;
-            box-shadow: 0 40px 100px rgba(0, 0, 0, 0.8);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35), 0 40px 100px rgba(0, 0, 0, 0.2);
         }
 
         .phone-frame {
@@ -64,14 +64,14 @@
 
         /* 顶部头部 */
         .page-header {
-            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            background: linear-gradient(135deg, #1a46c7 0%, #3b7cf5 60%, #60a5fa 100%);
             padding: 18px 20px 22px;
             color: white;
             position: relative;
             overflow: hidden;
             border-bottom-left-radius: 24px;
             border-bottom-right-radius: 24px;
-            box-shadow: 0 4px 12px rgba(30, 60, 114, 0.2);
+            box-shadow: 0 6px 20px rgba(26, 70, 199, 0.25);
             z-index: 10;
         }
 
@@ -197,7 +197,7 @@
             font-size: 22px;
             background: white;
             border: 4px solid #E0E7F1;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+            box-shadow: 0 4px 14px rgba(0,0,0,0.08), 0 1px 3px rgba(0,0,0,0.04);
             transition: all 0.3s;
         }
 
@@ -223,9 +223,9 @@
 
         /* 节点状态 */
         .node.completed .node-icon {
-            border-color: #1e3c72;
-            background: linear-gradient(135deg, #EBF0FA, #dce6f7);
-            color: #1e3c72;
+            border-color: #3b7cf5;
+            background: linear-gradient(135deg, #EBF4FF, #DBEAFE);
+            color: #1a46c7;
         }
 
         .node.active .node-icon {
@@ -290,7 +290,7 @@
             background: white;
             border-top-left-radius: 28px;
             border-top-right-radius: 28px;
-            box-shadow: 0 -10px 30px rgba(0,0,0,0.1);
+            box-shadow: 0 -8px 30px rgba(0,0,0,0.08), 0 -2px 8px rgba(0,0,0,0.04);
             transform: translateY(100%);
             transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.3, 1);
             z-index: 20;
@@ -318,7 +318,7 @@
         }
 
         .sheet-header h3 { font-size: 18px; color: #1a1a1a; font-weight: 700; }
-        .sheet-progress { font-size: 13px; color: #2a5298; font-weight: 600; }
+        .sheet-progress { font-size: 13px; color: #3b7cf5; font-weight: 600; }
 
         .close-btn {
             background: #F3F4F6;
@@ -344,12 +344,13 @@
         .video-item {
             display: flex;
             align-items: center;
-            padding: 12px;
+            padding: 14px;
             background: #F8FAFC;
-            border-radius: 14px;
+            border-radius: 16px;
             margin-bottom: 10px;
             gap: 12px;
-            transition: all 0.3s;
+            transition: all 0.25s ease;
+            border: 1px solid rgba(0,0,0,0.03);
         }
 
         .video-item:last-child { margin-bottom: 0; }
@@ -357,7 +358,7 @@
         /* 自动聚焦的视频项高亮 */
         .video-item.auto-focus {
             background: #EBF0FA;
-            border: 2px solid #1e3c72;
+            border: 2px solid #1a46c7;
             animation: focusBlink 1.5s ease;
         }
 
@@ -369,8 +370,8 @@
 
         .video-cover {
             width: 50px; height: 50px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            border-radius: 12px;
+            background: linear-gradient(135deg, #3b7cf5 0%, #6366f1 100%);
+            border-radius: 14px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -398,8 +399,8 @@
             flex-shrink: 0;
         }
 
-        .btn-learn { background: #1e3c72; color: white; }
-        .btn-done { background: #EBF0FA; color: #1e3c72; }
+        .btn-learn { background: linear-gradient(135deg, #1a46c7, #3b7cf5); color: white; box-shadow: 0 2px 8px rgba(26,70,199,0.25); }
+        .btn-done { background: #EBF0FA; color: #1a46c7; }
         .btn-locked { background: #F3F4F6; color: #9CA3AF; }
 
         /* 流星 */
@@ -582,8 +583,8 @@
         { name: '母婴护理', status: 'active', icon: 'active', videos: [
             { title: '新生儿安抚技巧', duration: '5分钟', status: 'done' },
             { title: '辅食添加指南', duration: '4分钟', status: 'done' },
-            { title: '婴儿洗澡注意事项', duration: '3分钟', status: 'done' },
-            { title: '阶段考核测试', duration: '不限时', status: 'learn', isExam: true }
+            { title: '婴儿洗澡注意事项', duration: '3分钟', status: 'learn' },
+            { title: '阶段考核测试', duration: '不限时', status: 'locked', isExam: true }
         ]},
         { name: '高级收纳', status: 'locked', icon: 'locked', videos: [
             { title: '衣柜收纳整理', duration: '5分钟', status: 'locked' },
@@ -666,7 +667,7 @@
         const solidLine = document.createElementNS('http://www.w3.org/2000/svg', 'path');
         solidLine.setAttribute('d', completedPath);
         solidLine.setAttribute('fill', 'transparent');
-        solidLine.setAttribute('stroke', '#1e3c72');
+        solidLine.setAttribute('stroke', '#1a46c7');
         solidLine.setAttribute('stroke-width', '5');
         solidLine.setAttribute('stroke-linecap', 'round');
         svgPath.appendChild(solidLine);
@@ -734,7 +735,7 @@
             let btnHtml = '';
             if (v.status === 'done') btnHtml = '<button class="video-action-btn btn-done">已完成</button>';
             else if (v.status === 'learn' && isExam) btnHtml = '<button class="video-action-btn btn-learn" onclick="location.href=\'考核.html\'">去考核</button>';
-            else if (v.status === 'learn') btnHtml = '<button class="video-action-btn btn-learn">去学习</button>';
+            else if (v.status === 'learn') btnHtml = `<button class="video-action-btn btn-learn" onclick="location.href='视频学习.html?title=${encodeURIComponent(v.title)}&duration=${encodeURIComponent(v.duration)}'">去学习</button>`;
             else btnHtml = '<button class="video-action-btn btn-locked">未解锁</button>';
 
             /* 考核项用笔记图标，视频项用播放图标 */
@@ -846,9 +847,15 @@
                     activeNode.classList.remove('wait-meteor');
                     activeNode.classList.add('meteor-landed');
 
-                    // 撞击动画结束后打开抽屉
+                    // 撞击动画结束后打开抽屉，再自动跳转学习视频
                     setTimeout(() => {
                         openSheet(STAGES[activeIdx], activeIdx, true);
+                        const learnVideo = STAGES[activeIdx].videos.find(v => v.status === 'learn');
+                        if (learnVideo) {
+                            setTimeout(() => {
+                                location.href = '视频学习.html?title=' + encodeURIComponent(learnVideo.title) + '&duration=' + encodeURIComponent(learnVideo.duration);
+                            }, 1500);
+                        }
                     }, 900);
                 }
             }
