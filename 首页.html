@@ -520,7 +520,12 @@
     setInterval(updateTime, 1000);
     updateTime();
 
+    // 首次使用：先选等级，选完后进首页再自动跳学习计划
     window.addEventListener('load', function() {
+        if (!localStorage.getItem('hasSelectedLevel')) {
+            location.href = '选择等级.html';
+            return;
+        }
         if (!sessionStorage.getItem('hasVisitedHome')) {
             sessionStorage.setItem('hasVisitedHome', '1');
             location.href = '学习计划-地图版.html';

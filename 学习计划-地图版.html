@@ -243,6 +243,68 @@
 
         .node.locked .node-title { color: #B0B0B0; }
 
+        /* 投诉整改节点 — 红色警告 */
+        .node.complaint .node-icon {
+            border-color: #FF4D4F;
+            background: linear-gradient(135deg, #FFF1F0, #FFE4E1);
+            color: #FF4D4F;
+            animation: nodePulseRed 2s infinite;
+        }
+
+        .node.complaint .node-title {
+            color: #FF4D4F;
+            background: rgba(255,241,240,0.95);
+        }
+
+        .node.complaint .node-icon::after {
+            content: '';
+            position: absolute;
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            border: 2px dashed rgba(255,77,79,0.4);
+            animation: spinRing 8s linear infinite;
+        }
+
+        @keyframes nodePulseRed {
+            0% { box-shadow: 0 0 0 0 rgba(255, 77, 79, 0.4); }
+            70% { box-shadow: 0 0 0 14px rgba(255, 77, 79, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(255, 77, 79, 0); }
+        }
+
+        /* 冻结节点 — 原进度被暂停 */
+        .node.frozen .node-icon {
+            border-color: #94A3B8;
+            background: linear-gradient(135deg, #F1F5F9, #E2E8F0);
+            color: #64748B;
+            opacity: 0.7;
+        }
+
+        .node.frozen .node-title {
+            color: #94A3B8;
+        }
+
+        /* 选做标签 */
+        .node-optional-tag {
+            font-size: 10px;
+            background: #FFF7ED;
+            color: #D97706;
+            padding: 2px 8px;
+            border-radius: 8px;
+            font-weight: 600;
+            margin-top: 4px;
+        }
+
+        .node-required-tag {
+            font-size: 10px;
+            background: #FFF1F0;
+            color: #FF4D4F;
+            padding: 2px 8px;
+            border-radius: 8px;
+            font-weight: 600;
+            margin-top: 4px;
+        }
+
         /* 当前阶段高亮环 */
         .node.active .node-icon::after {
             content: '';
@@ -402,6 +464,30 @@
         .btn-learn { background: linear-gradient(135deg, #1a46c7, #3b7cf5); color: white; box-shadow: 0 2px 8px rgba(26,70,199,0.25); }
         .btn-done { background: #EBF0FA; color: #1a46c7; }
         .btn-locked { background: #F3F4F6; color: #9CA3AF; }
+        .btn-complaint { background: linear-gradient(135deg, #FF4D4F, #FF7875); color: white; box-shadow: 0 2px 8px rgba(255,77,79,0.25); }
+
+        /* 视频项的选做/必做标记 */
+        .video-tag-optional {
+            font-size: 10px;
+            background: #FFF7ED;
+            color: #D97706;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: 600;
+        }
+        .video-tag-required {
+            font-size: 10px;
+            background: #FFF1F0;
+            color: #FF4D4F;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: 600;
+        }
+
+        /* 投诉整改视频封面 */
+        .video-cover.complaint-cover {
+            background: linear-gradient(135deg, #FF4D4F 0%, #FF7875 100%);
+        }
 
         /* 流星 */
         .meteor {
@@ -576,26 +662,34 @@
     /* ========== 数据配置 ========== */
     const STAGES = [
         { name: '基础礼仪', status: 'completed', icon: 'completed', videos: [
-            { title: '家政服务基本礼仪', duration: '4分钟', status: 'done' },
-            { title: '客户沟通技巧', duration: '5分钟', status: 'done' },
-            { title: '阶段考核测试', duration: '不限时', status: 'done', isExam: true }
+            { title: '家政服务基本礼仪', duration: '4分钟', status: 'done', tag: '必修' },
+            { title: '客户沟通技巧', duration: '5分钟', status: 'done', tag: '必修' },
+            { title: '职业形象与仪态', duration: '3分钟', status: 'done', tag: '选修' },
+            { title: '阶段考核测试', duration: '不限时', status: 'done', isExam: true, tag: '必修' }
         ]},
-        { name: '母婴护理', status: 'active', icon: 'active', videos: [
-            { title: '新生儿安抚技巧', duration: '5分钟', status: 'done' },
-            { title: '辅食添加指南', duration: '4分钟', status: 'done' },
-            { title: '婴儿洗澡注意事项', duration: '3分钟', status: 'learn' },
-            { title: '阶段考核测试', duration: '不限时', status: 'locked', isExam: true }
+        { name: '⚠️ 投诉整改', status: 'complaint', icon: 'complaint', isComplaint: true, videos: [
+            { title: '冲泡奶粉的标准流程', duration: '5分钟', status: 'learn', tag: '必修' },
+            { title: '奶粉水温控制要点', duration: '3分钟', status: 'locked', tag: '必修' },
+            { title: '整改专项考核', duration: '不限时', status: 'locked', isExam: true, tag: '必修' }
+        ]},
+        { name: '母婴护理', status: 'frozen', icon: 'frozen', isFrozen: true, videos: [
+            { title: '新生儿安抚技巧', duration: '5分钟', status: 'done', tag: '必修' },
+            { title: '辅食添加指南', duration: '4分钟', status: 'done', tag: '必修' },
+            { title: '婴儿洗澡注意事项', duration: '3分钟', status: 'frozen', tag: '必修' },
+            { title: '婴儿抚触按摩', duration: '4分钟', status: 'frozen', tag: '选修' },
+            { title: '阶段考核测试', duration: '不限时', status: 'frozen', isExam: true, tag: '必修' }
         ]},
         { name: '高级收纳', status: 'locked', icon: 'locked', videos: [
-            { title: '衣柜收纳整理', duration: '5分钟', status: 'locked' },
-            { title: '厨房空间优化', duration: '4分钟', status: 'locked' },
-            { title: '阶段考核测试', duration: '不限时', status: 'locked', isExam: true }
+            { title: '衣柜收纳整理', duration: '5分钟', status: 'locked', tag: '必修' },
+            { title: '厨房空间优化', duration: '4分钟', status: 'locked', tag: '必修' },
+            { title: '断舍离实践指南', duration: '3分钟', status: 'locked', tag: '选修' },
+            { title: '阶段考核测试', duration: '不限时', status: 'locked', isExam: true, tag: '必修' }
         ]},
         { name: '营养膳食', status: 'locked', icon: 'locked', videos: [
-            { title: '月子餐搭配原则', duration: '5分钟', status: 'locked' },
-            { title: '产后营养调理', duration: '4分钟', status: 'locked' },
-            { title: '家常菜烹饪技巧', duration: '5分钟', status: 'locked' },
-            { title: '阶段考核测试', duration: '不限时', status: 'locked', isExam: true }
+            { title: '月子餐搭配原则', duration: '5分钟', status: 'locked', tag: '必修' },
+            { title: '产后营养调理', duration: '4分钟', status: 'locked', tag: '必修' },
+            { title: '家常菜烹饪技巧', duration: '5分钟', status: 'locked', tag: '选修' },
+            { title: '阶段考核测试', duration: '不限时', status: 'locked', isExam: true, tag: '必修' }
         ]}
     ];
 
@@ -603,7 +697,9 @@
     const NODE_ICONS = {
         completed: '<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>',
         active: '<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>',
-        locked: '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>'
+        locked: '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>',
+        complaint: '<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>',
+        frozen: '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg>'
     };
 
     /* ========== 布局计算 ========== */
@@ -648,7 +744,9 @@
     }
 
     const fullPath = buildPath(positions);
-    const activeIdx = STAGES.findIndex(s => s.status === 'active');
+    // complaint 节点视为当前活跃节点（优先级最高）
+    const complaintIdx = STAGES.findIndex(s => s.status === 'complaint');
+    const activeIdx = complaintIdx >= 0 ? complaintIdx : STAGES.findIndex(s => s.status === 'active');
     const completedPositions = positions.slice(0, activeIdx + 1);
     const completedPath = buildPath(completedPositions);
 
@@ -685,25 +783,40 @@
         node.style.left = pos.x + 'px';
         node.style.top = pos.y + 'px';
 
-        // active节点先隐藏，等流星到达后再显示
-        if (stage.status === 'active') {
+        // complaint节点先隐藏，等流星到达后再显示
+        if (stage.status === 'complaint') {
             node.classList.add('wait-meteor');
         } else {
             // 其他节点正常错开入场
             node.style.animationDelay = (index * 0.2 + 0.3) + 's';
         }
 
+        // 必修课数量
+        const requiredCount = stage.videos.filter(v => v.tag === '必修').length;
+        const optionalCount = stage.videos.filter(v => v.tag === '选修').length;
+        const subText = optionalCount > 0 ? `${requiredCount}必修 · ${optionalCount}选修` : `${stage.videos.length}个课程`;
+
+        // 节点标签
+        let tagHtml = '';
+        if (stage.isComplaint) tagHtml = '<div class="node-required-tag">⚠️ 投诉整改</div>';
+        else if (stage.isFrozen) tagHtml = '<div class="node-optional-tag">⏸ 已暂停</div>';
+
         node.innerHTML = `
             <div class="node-icon">${NODE_ICONS[stage.icon]}</div>
             <div class="node-label">
-                <div class="node-title">阶段${index + 1}：${stage.name}</div>
-                <div class="node-sub">${stage.videos.length}个课程</div>
+                <div class="node-title">${stage.name}</div>
+                <div class="node-sub">${subText}</div>
+                ${tagHtml}
             </div>
         `;
 
         node.addEventListener('click', () => {
             if (stage.status === 'locked') {
                 showToast('请先完成前面的阶段哦');
+                return;
+            }
+            if (stage.status === 'frozen') {
+                showToast('完成整改后自动恢复');
                 return;
             }
             openSheet(stage, index);
@@ -720,34 +833,44 @@
     const videoList = document.getElementById('videoList');
 
     function openSheet(stage, index, autoFocusFirst) {
-        sheetTitle.textContent = `阶段${index + 1}：${stage.name}`;
+        sheetTitle.textContent = stage.isComplaint ? stage.name : `${stage.name}`;
         const doneCount = stage.videos.filter(v => v.status === 'done').length;
-        sheetProgress.textContent = `${doneCount}/${stage.videos.length} 已完成`;
+        const requiredVideos = stage.videos.filter(v => v.tag === '必修');
+        const requiredDone = requiredVideos.filter(v => v.status === 'done').length;
+        sheetProgress.textContent = `${requiredDone}/${requiredVideos.length} 必修已完成`;
 
-        // 找到考核项索引（优先聚焦考核，否则第一个待学习）
-        const examLearnIdx = stage.videos.findIndex(v => v.status === 'learn' && v.isExam);
-        const firstLearnIdx = examLearnIdx >= 0 ? examLearnIdx : stage.videos.findIndex(v => v.status === 'learn');
+        // 默认只跳必修：找第一个待学习的必修课
+        const firstRequiredLearnIdx = stage.videos.findIndex(v => v.status === 'learn' && v.tag === '必修');
+        const firstLearnIdx = firstRequiredLearnIdx >= 0 ? firstRequiredLearnIdx : stage.videos.findIndex(v => v.status === 'learn');
 
         videoList.innerHTML = stage.videos.map((v, vi) => {
-            const isLocked = v.status === 'locked';
+            const isLocked = v.status === 'locked' || v.status === 'frozen';
             const isExam = v.isExam === true;
             const isFocus = autoFocusFirst && vi === firstLearnIdx;
+            const isComplaintStage = stage.isComplaint;
+
             let btnHtml = '';
             if (v.status === 'done') btnHtml = '<button class="video-action-btn btn-done">已完成</button>';
-            else if (v.status === 'learn' && isExam) btnHtml = '<button class="video-action-btn btn-learn" onclick="location.href=\'考核.html\'">去考核</button>';
-            else if (v.status === 'learn') btnHtml = `<button class="video-action-btn btn-learn" onclick="location.href='视频学习.html?title=${encodeURIComponent(v.title)}&duration=${encodeURIComponent(v.duration)}'">去学习</button>`;
+            else if (v.status === 'frozen') btnHtml = '<button class="video-action-btn btn-locked">已暂停</button>';
+            else if (v.status === 'learn' && isExam) btnHtml = `<button class="video-action-btn ${isComplaintStage ? 'btn-complaint' : 'btn-learn'}" onclick="location.href='考核.html'">去考核</button>`;
+            else if (v.status === 'learn') btnHtml = `<button class="video-action-btn ${isComplaintStage ? 'btn-complaint' : 'btn-learn'}" onclick="location.href='视频学习.html?title=${encodeURIComponent(v.title)}&duration=${encodeURIComponent(v.duration)}'">去学习</button>`;
             else btnHtml = '<button class="video-action-btn btn-locked">未解锁</button>';
+
+            // 标签
+            const tagHtml = v.tag === '选修' ? '<span class="video-tag-optional">选修</span>' : (isComplaintStage ? '<span class="video-tag-required">必修</span>' : '');
 
             /* 考核项用笔记图标，视频项用播放图标 */
             const coverIcon = isLocked ? '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>'
                 : isExam ? '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>'
                 : '<svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>';
 
+            const coverClass = isComplaintStage && !isLocked ? 'video-cover complaint-cover' : 'video-cover';
+
             return `
                 <div class="video-item ${isLocked ? 'locked-video' : ''} ${isFocus ? 'auto-focus' : ''}">
-                    <div class="video-cover">${coverIcon}</div>
+                    <div class="${coverClass}">${coverIcon}</div>
                     <div class="video-info">
-                        <h4>${v.title}</h4>
+                        <h4>${v.title} ${tagHtml}</h4>
                         <p>${v.duration}</p>
                     </div>
                     ${btnHtml}
@@ -847,11 +970,12 @@
                     activeNode.classList.remove('wait-meteor');
                     activeNode.classList.add('meteor-landed');
 
-                    // 撞击动画结束后打开抽屉，再自动跳转学习视频
+                    // 撞击动画结束后打开抽屉，再自动跳转必修学习视频
                     setTimeout(() => {
                         openSheet(STAGES[activeIdx], activeIdx, true);
-                        const learnVideo = STAGES[activeIdx].videos.find(v => v.status === 'learn');
-                        if (learnVideo) {
+                        // 默认只跳必修课
+                        const learnVideo = STAGES[activeIdx].videos.find(v => v.status === 'learn' && v.tag === '必修');
+                        if (learnVideo && !learnVideo.isExam) {
                             setTimeout(() => {
                                 location.href = '视频学习.html?title=' + encodeURIComponent(learnVideo.title) + '&duration=' + encodeURIComponent(learnVideo.duration);
                             }, 1500);
